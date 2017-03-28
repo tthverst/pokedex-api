@@ -22,7 +22,7 @@ var passport = require('./auth/passport')(model.User);
 // Passport
 
 //Handlebars helpers
-var handlebarsHelpers  = require('./helpers/handlebars-arithmetic.js')(exphbs);
+var handlebarsHelpers  = require('./helpers/handlebars-helpers.js')(exphbs);
 //Handlebars helpers
 
 // Roles

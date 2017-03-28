@@ -28,6 +28,11 @@ function hbsHelpers(hbs) {
 				}
 
 				return "NaN";
+			},
+			padNumber: function(character, padLength, padChar, options) {
+				var s = String(character);
+				while (s.length < (padLength || 2)) {s = padChar + s;}
+				return s;
 			}
 		}
 	});
