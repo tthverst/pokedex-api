@@ -111,70 +111,70 @@ var init = function (User) {
 
     passport.use(new GitHubStatery(githubOptions, function (req, token, refreshToken, profile, done) {
 
-            // make the code asynchronous
-            // User.findOne won't fire until we have all our data back from Google
-            process.nextTick(function () {
-                if (!req.user) {
-                    // try to find the user based on their google id
-                    User.findOne({ 'github.id': profile.id }, function (err, user) {
-                        if (err)
-                            return done(err);
+        // make the code asynchronous
+        // User.findOne won't fire until we have all our data back from Google
+        process.nextTick(function () {
+            if (!req.user) {
+                // try to find the user based on their google id
+                User.findOne({ 'github.id': profile.id }, function (err, user) {
+                    if (err)
+                        return done(err);
 
-                        if (user) {
-                            // if there is a user id already but no token (user was linked at one point and then removed)
-                            // just add our token and profile information
-                            if (!user.github.token) {
-                                user.github.token = token;
-                                user.github.name = profile.displayName;
-                                user.github.username = profile.username;
+                    if (user) {
+                        // if there is a user id already but no token (user was linked at one point and then removed)
+                        // just add our token and profile information
+                        if (!user.github.token) {
+                            user.github.token = token;
+                            user.github.name = profile.displayName;
+                            user.github.username = profile.username;
 
-                                user.save(function (err) {
-                                    if (err)
-                                        throw err;
-                                    return done(null, user);
-                                });
-                            }
-
-                            // if a user is found, log them in
-                            return done(null, user);
-                        } else {
-                            // if the user isnt in our database, create a new user
-                            var newUser = new User();
-
-                            // set all of the relevant information
-                            newUser.github.id = profile.id;
-                            newUser.github.token = token;
-                            newUser.github.name = profile.displayName;
-                            newUser.github.username = profile.username;
-
-                            // save the user
-                            newUser.save(function (err) {
+                            user.save(function (err) {
                                 if (err)
                                     throw err;
-                                return done(null, newUser);
+                                return done(null, user);
                             });
                         }
-                    });
 
-                } else {
-                    // user already exists and is logged in, we have to link accounts
-                    var user = req.user; // pull the user out of the session
-
-                    // update the current users facebook credentials
-                    user.github.id = profile.id;
-                    user.github.token = token;
-                    user.github.name = profile.displayName;
-                    user.github.username = profile.username;
-
-                    // save the user
-                    user.save(function (err) {
-                        if (err)
-                            throw err;
+                        // if a user is found, log them in
                         return done(null, user);
-                    });
-                }
-            });
-        }
+                    } else {
+                        // if the user isnt in our database, create a new user
+                        var newUser = new User();
+
+                        // set all of the relevant information
+                        newUser.github.id = profile.id;
+                        newUser.github.token = token;
+                        newUser.github.name = profile.displayName;
+                        newUser.github.username = profile.username;
+
+                        // save the user
+                        newUser.save(function (err) {
+                            if (err)
+                                throw err;
+                            return done(null, newUser);
+                        });
+                    }
+                });
+
+            } else {
+                // user already exists and is logged in, we have to link accounts
+                var user = req.user; // pull the user out of the session
+
+                // update the current users facebook credentials
+                user.github.id = profile.id;
+                user.github.token = token;
+                user.github.name = profile.displayName;
+                user.github.username = profile.username;
+
+                // save the user
+                user.save(function (err) {
+                    if (err)
+                        throw err;
+                    return done(null, user);
+                });
+            }
+        });
+    }
     ));
 
     return passport;

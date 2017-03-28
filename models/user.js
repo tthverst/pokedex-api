@@ -2,7 +2,7 @@ var _ = require('underscore');
 
 var init = function (mongoose) {
     var userSchema = mongoose.Schema({
-        role: [String],
+        role: String,
         google: {
             id: String,
             token: String,
@@ -14,7 +14,8 @@ var init = function (mongoose) {
             token: String,
             username: String,
             name: String
-        }
+        },
+        pokemons: [Number]
     });
 
     userSchema.methods.hasAnyRole = function (roles) {
