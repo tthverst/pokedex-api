@@ -5,39 +5,80 @@
 {{#each pokemons}}
 	<div class="col-sm-4">
 		<div class="well text-center">
-			<h3 class="text-center">{{this.name}}</h3>
-			<img src="https://upload.wikimedia.org/wikipedia/en/2/28/Pokémon_Bulbasaur_art.png">
+			<h3 class="text-center poke-name">{{this.name}}</h3>
+			<a data-toggle="tooltip" title="Click me!" onclick="$('#cry-{{this.id}}')[0].play();">
+				<img class="poke-img" src="./img/pokemon/{{this.id}}.png">
+			</a>
+			<audio id="cry-{{this.id}}" ><source src="./media/sound/cries/{{this.id}}.ogg" type="audio/ogg"></audio>
 			<div class="row">
 				<div class="col-sm-12">
-					<h5>Type</h5>
-					<p><span>Grass </span><span>Poison</span></p>
+					<h4>Type(s)</h4>
+					<p>
+						{{#each this.types}}
+							<span class="badge {{this}}">{{this}}</span>
+						{{/each}}
+					</p>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-sm-12">
-					<h5>Capture rate (0-255)</h5>
-					<p><span>45</span></p>
+					<h4>Capture rate (0-255)</h4>
+					<p><span>{{this.capture_rate}}</span></p>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-sm-6">
-					<h5>Height</h5>
-					<p>11</p>
+					<h4>Height</h4>
+					<p>{{divide this.height 10}} m</p>
 				</div>
 				<div class="col-sm-6">
-					<h5>Weight</h5>
-					<p>65</p>
+					<h4>Weight</h4>
+					<p>{{divide this.weight 10}} kg</p>
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-sm-12">
-					<h5>Flavour text</h5>
-					<p><span>Lorum ipsum</span></p>
+					<p><span>{{this.flavour_text}}</span></p>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-12">
+					<h4>Stats</h4>
+					<div class="col-sm-6">
+						<h4>HP:</p>
+						<h4>Attack:</h4>
+						<h4>Defence:</h4>
+						<h4>Sp.Atk:</h4>
+						<h4>Sp.Def:</h4>
+						<h4>Speed:</h4>
+					</div>
+					<div class="col-sm-6">
+						<p>{{this.stats.hp}}</p>
+						<p>{{this.stats.attack}}</p>
+						<p>{{this.stats.defence}}</p>
+						<p>{{this.stats.sp-atk}}</p>
+						<p>{{this.stats.sp-def}}</p>
+						<p>{{this.stats.speed}}</p>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 {{/each}}
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();   
+});
+</script>
+
+
+
+
+
+
+

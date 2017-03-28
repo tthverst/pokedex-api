@@ -1,0 +1,52 @@
+.badge, .poke-name{
+	text-transform: capitalize;
+}
+
+.normal {
+	background-color: #A8A878;
+}
+.fire {
+	background-color: #F08030;
+}
+.fighting {
+	background-color: #C03028;
+}
+.water {
+	background-color: #6890F0;
+}
+.flying {
+	background-color: #A890F0;
+}
+.grass {
+	background-color: #78C850;
+}
+.poison {
+	background-color: #A040A0;
+}
+.electric {
+	background-color: #F8D030;
+}
+.ground {
+	background-color: #E0C068;
+}
+.psychic {
+	background-color: #F85888;
+}
+.rock {
+	background-color: #B8A038;
+}
+.ice {
+	background-color: #98D8D8;
+}
+.bug {
+	background-color: #A8B820;
+}
+.dragon {
+	background-color: #7038F8;
+}
+.ghost {
+	background-color: #705898;
+}
+.fairy {
+	background-color: #EE99AC;
+}

@@ -21,6 +21,10 @@ require('./models/fillTestData')(model);
 var passport = require('./auth/passport')(model.User);
 // Passport
 
+//Handlebars helpers
+var handlebarsHelpers  = require('./helpers/handlebars-arithmetic.js')(exphbs);
+//Handlebars helpers
+
 // Roles
 var roles = require('./auth/connectroles')();
 // Roles
@@ -45,7 +49,7 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views/'));
-app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+app.engine('handlebars', exphbs({ defaultLayout: 'main', helpers:  handlebarsHelpers.helpers}));
 app.set('view engine', 'handlebars');
 
 app.use(bodyParser.json());
