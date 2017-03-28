@@ -13,14 +13,13 @@ function getPokemons(req, res) {
 		
         res.format({
 			'text/html': function(){
-				res.render('pokemons.handlebars', { pokemons: pokemons });
+				res.status(200).render('pokemons.handlebars', { pokemons: pokemons });
 			},
 			
 			'*/*': function() {
-				res.send({ pokemons: pokemons });
+				res.status(200).send({ pokemons: pokemons });
 			}
 		});
-        res.status(200).json(pokemons);
     });
 }
 
