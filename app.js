@@ -33,7 +33,7 @@ function handleError(req, res, statusCode, message) {
     console.log('Response sent: Statuscode ' + statusCode + ', Message "' + message + '"');
     console.log('-------- /Error handled --------');
     res.status(statusCode);
-    res.json(message);
+    res.send(message);
 };
 
 // Routes

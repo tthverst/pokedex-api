@@ -9,9 +9,9 @@ var acl;
 
 function getPokemons(req, res) {
     Pokemon.find({}, function (err, pokemons) {
-        if (err) { return handleError(err); }
+        if (err) { return handleError(err, res, 400, "Pokemons not found."); }		
 		
-		res.format({
+        res.format({
 			'text/html': function(){
 				res.render('pokemons.handlebars', { pokemons: pokemons });
 			},
@@ -20,32 +20,70 @@ function getPokemons(req, res) {
 				res.send({ pokemons: pokemons });
 			}
 		});
+        res.status(200).json(pokemons);
     });
 }
 
 function getPokemon(req, res) {
-    Pokemon.findById(req.params.name, function(err, pokemon) {
-        if (err) { return handleError(err); }
-        res.json(pokemon);
-    })
+    Pokemon.find({ "name": req.params.name.toLowerCase() }, function (err, pokemon) {
+        if (err) { return handleError(err, res, 404, "Pokemon not found."); }
+        res.status(200).json(pokemon);
+    });
 }
 
-router.use(function (req, res, next) {
-    console.log("Pokemons are here!");
-    next();
-})
+function postPokemon(req, res) {
+    var pokemon = new Pokemon();
 
-router.route('/').get(getPokemons);
+    console.log(req.body);
+    pokemon.id = req.body.pokemon_id;
+    pokemon.name = req.body.name;
+    pokemon.height = req.body.height;
+    pokemon.weight = req.body.weight;
+    pokemon.types = req.body.types;
+    pokemon.stats = req.body.stats;
+    pokemon.capture_rate = req.body.capture_rate;
+    pokemon.flavour_text = req.body.flavour_text;
 
-// router.route('/')
-//     .get(function (req, res) {
-//         res.render('pokemons', {
-//             title: 'Pokemons'
-//         });
-//     }
-//     );
+    pokemon.save(function (err) {
+        if (err) { return handleError(err, res, 400, "Pokemon is not added. You might have chosen an ID or name that already exists."); }
+        res.status(201).send("Pokemon created");
+    });
+}
 
-router.route('/:name').get(getPokemon);
+function putPokemon(req, res) {
+    Pokemon.findOne({ "name": req.params.name.toLowerCase() }, function (err, pokemon) {
+        if (err) { return handleError(err); }
+
+        pokemon.name = req.body.name;
+        pokemon.height = req.body.height;
+        pokemon.weight = req.body.weight;
+        pokemon.types = req.body.types;
+        pokemon.stats = req.body.stats;
+        pokemon.capture_rate = req.body.capture_rate;
+        pokemon.flavour_text = req.body.flavour_text;
+
+        pokemon.save(function (err) {
+            if (err) { return handleError(err, res, 400, "Pokemon is not updated. You might have chosen an name that already exists."); }
+            res.status(200).json(pokemon);
+        });
+    });
+}
+
+function deletePokemon(req, res) {
+    Pokemon.remove({ "name": req.params.name }, function (err, bear) {
+        if (err) { return handleError(err, res, 400, "Pokemon is not removed."); }
+        res.status(200).send("Pokemon removed");
+    });
+}
+
+router.route('/')
+    .get(getPokemons)
+    .post(postPokemon);
+
+router.route('/:name')
+    .get(getPokemon)
+    .put(putPokemon)
+    .delete(deletePokemon);
 
 module.exports = function (model, errCallback) {
     console.log('Initializing pokemons routing module');
