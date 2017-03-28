@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express();
+var path = require('path');
 var Pokemon;
 var _ = require('underscore');
 var handleError;
@@ -9,7 +10,16 @@ var acl;
 function getPokemons(req, res) {
     Pokemon.find({}, function (err, pokemons) {
         if (err) { return handleError(err); }
-        res.json(pokemons);
+		
+		res.format({
+			'text/html': function(){
+				res.render('pokemons.handlebars', { pokemons: pokemons });
+			},
+			
+			'*/*': function() {
+				res.send({ pokemons: pokemons });
+			}
+		});
     });
 }
 
@@ -25,8 +35,8 @@ router.use(function (req, res, next) {
     next();
 })
 
-router.route('/')
-    .get(getPokemons)
+router.route('/').get(getPokemons);
+
 // router.route('/')
 //     .get(function (req, res) {
 //         res.render('pokemons', {

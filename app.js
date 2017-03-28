@@ -68,11 +68,6 @@ app.use(roles.middleware());
 app.use('/', routes);
 app.use('/pokemons', pokemons);
 
-// API Routes
-app.use('/api/v1/pokemons', pokemons);
-// app.use('/api/v1/pokemons', { pokemons: pokemons, setHeaders: function (res, path) { res.set("content-type", "*/json") } });
-// /Routing
-
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
