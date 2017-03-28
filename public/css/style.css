@@ -1,3 +1,7 @@
+.pokeball {
+	width: 10em;
+}
+
 .badge, .poke-name{
 	text-transform: capitalize;
 }
