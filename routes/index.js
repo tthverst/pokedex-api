@@ -8,7 +8,7 @@ module.exports = function(passport){
 			if(req.isAuthenticated()){
 				res.redirect('/profile');
 			} else{
-				res.render('index', { title: 'Passport and ACL demo' });
+				res.render('index', { title: 'PokeApi by Tom and Dennis' });
 			}
 		});
 
@@ -20,7 +20,7 @@ module.exports = function(passport){
 
     router.route('/profile')
     	.get(function(req, res) {
-		        res.render('account/profile', {
+		        res.render('profile', {
 		        	title: 'Your profile', 
 		            user : req.user // get the user out of session and pass to template
 		        });

@@ -4,17 +4,18 @@ var init = function (mongoose) {
     var userSchema = mongoose.Schema({
         role: [String],
         google: {
-            id: String,
-            token: String,
-            email: String,
-            name: String,
+            id      : String,
+            token   : String,
+            email   : String,
+            name    : String,
         },
         github: {
-            id: String,
-            token: String,
+            id      : String,
+            token   : String,
             username: String,
-            name: String
-        }
+            name    : String
+        },
+        pokemons    : [Number]
     });
 
     userSchema.methods.hasAnyRole = function (roles) {

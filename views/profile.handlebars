@@ -1,0 +1,44 @@
+<div class="page-header text-center">
+    <h1><span class="fa fa-user"></span> {{title}}</h1>
+    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+</div>
+
+<div class="row">
+    <!-- GOOGLE INFORMATION -->
+    <div class="col-sm-6">
+        <div class="well">
+            <h3><span class="fa fa-google"></span> Google</h3>
+            <!-- check if the user has this token (is the user authenticated with this social account) -->
+            {{#if user.google.token}}
+            <p>
+                <strong>id</strong>: {{ user.google.id }}<br>
+                <strong>token</strong>: {{ user.google.token }}<br>
+                <strong>email</strong>: {{ user.google.email }}<br>
+                <strong>name</strong>: {{ user.google.name }}
+            </p>
+
+            <a href="/unlink/google" class="btn btn-danger">Unlink</a> {{else}}
+            <a href="/connect/google" class="btn btn-success">Connect Google</a> {{/if}}
+
+        </div>
+    </div>
+
+    <!-- GITHUB INFORMATION -->
+    <div class="col-sm-6">
+        <div class="well">
+            <h3><span class="fa fa-github"></span> Github</h3>
+            <!-- check if the user has this token (is the user authenticated with this social account) -->
+            {{#if user.github.token}}
+            <p>
+                <strong>id</strong>: {{ user.github.id }}<br>
+                <strong>token</strong>: {{ user.github.token }}<br>
+                <strong>username</strong>: {{ user.github.username }}<br>
+                <strong>name</strong>: {{ user.github.name }}
+            </p>
+
+            <a href="/unlink/github" class="btn btn-danger">Unlink</a> {{else}}
+            <a href="/connect/github" class="btn btn-success">Connect Github</a> {{/if}}
+
+        </div>
+    </div>
+</div>

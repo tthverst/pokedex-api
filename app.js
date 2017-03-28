@@ -12,6 +12,9 @@ var flash = require('connect-flash');
     var model = {};
     var mongoose = require('./config/database')();
     model.User = require('./models/user')(mongoose);
+    model.Pokemon = require('./models/pokemon')(mongoose);
+
+    require('./models/fillTestData')(model);
 // Models
 
 // Passport
@@ -34,9 +37,8 @@ function handleError(req, res, statusCode, message){
 };
 
 // Routes
-    var routes = require('./routes/index')(passport, roles);
-    // var books = require('./routes/books')(model, roles, handleError);
-    // var authors = require('./routes/authors')(model, roles, handleError);
+    var routes = require('./routes/index')(passport, model, roles);
+    var pokemons = require('./routes/pokemon')(model, handleError);
 // /Routes
 
 var app = express();
@@ -64,7 +66,7 @@ var app = express();
 
 // Routing
     app.use('/', routes);
-    // app.use('/books', books);
+    app.use('/pokemons', pokemons);
     // app.use('/authors', roles.can('access authors'), authors);
 // /Routing
 
@@ -104,63 +106,3 @@ app.listen(port);
 console.log('The magic happens on port ' + port);
 
 module.exports = app;
-
-
-
-/*
-
-var configDB = require('./config/database.js');
-
-mongoose.connect(configDB.url); // connect to our database
-
-require('./config/passport')(passport); // pass passport for configuration
-
-// set up our express application
-app.use(morgan('dev')); // log every request to the console
-app.use(cookieParser()); // read cookies (needed for auth)
-app.use(bodyParser()); // get information from html forms
-
-app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secret
-app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
-app.use(flash()); // use connect-flash for flash messages stored in session
-
-
-require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
-
-app.listen(port);
-
-// Week 4
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser);
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', routes);
-
-app.use(function(req, res, next) {
-    var err = new Error('Not found');
-    err.status = 404;
-    next(err);
-})
-
-if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        })
-    })
-}
-
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
-});
-
-
-module.exports = app;*/
