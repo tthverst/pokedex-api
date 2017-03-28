@@ -33,7 +33,6 @@ function getPokemon(req, res) {
 function postPokemon(req, res) {
     var pokemon = new Pokemon();
 
-    console.log(req.body);
     pokemon.id = req.body.pokemon_id;
     pokemon.name = req.body.name;
     pokemon.height = req.body.height;
@@ -69,24 +68,24 @@ function putPokemon(req, res) {
 }
 
 function deletePokemon(req, res) {
-    Pokemon.remove({ "name": req.params.name }, function (err, bear) {
+    Pokemon.remove({ "name": req.params.name.toLowerCase() }, function (err, bear) {
         if (err) { return handleError(err, res, 400, "Pokemon is not removed."); }
         res.status(200).send("Pokemon removed");
     });
 }
 
-router.route('/')
-    .get(getPokemons)
-    .post(postPokemon);
-
-router.route('/:name')
-    .get(getPokemon)
-    .put(putPokemon)
-    .delete(deletePokemon);
-
-module.exports = function (model, errCallback) {
-    console.log('Initializing pokemons routing module');
+module.exports = function (model, role, errCallback) {
     Pokemon = model.Pokemon;
     handleError = errCallback;
+
+    // Routing
+    router.route('/')
+        .get(getPokemons)
+        .post(role.can("manage pokemon"), postPokemon);
+
+    router.route('/:name')
+        .get(getPokemon)
+        .delete(role.can("manage pokemon"),deletePokemon);
+
     return router;
 }

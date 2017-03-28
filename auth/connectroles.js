@@ -7,9 +7,10 @@ module.exports = function () {
 		}
 	});
 
-	// Access authors can only be done by author
-	roles.use('access authors', function (req) {
-		if (req.user.hasAnyRole('author')) {
+	// Create pokemons can only be done by admins
+	roles.use('manage pokemon', function (req) {
+		console.log(req.user);
+		if (req.user.role === 'admin') {
 			return true;
 		};
 		// Don't return false, this way we can get into the next checker.
@@ -20,15 +21,6 @@ module.exports = function () {
 		if (req.user.hasAnyRole('admin')) {
 			return true;
 		};
-	});
-
-	roles.use('view authors books', function (req) {
-		// /authors/:id/books/
-		// /authors/:id/books/:bookId
-		if (req.user.local.username == req.params.id) {
-			return true;
-		};
-		// Don't return false, this way we can get into the next checker.
 	});
 
 	roles.use('edit authors books', function (req) {

@@ -42,7 +42,7 @@ function handleError(req, res, statusCode, message) {
 
 // Routes
 var routes = require('./routes/index')(passport, model, roles);
-var pokemons = require('./routes/pokemon')(model, handleError);
+var pokemons = require('./routes/pokemon')(model, roles, handleError);
 // /Routes
 
 var app = express();
