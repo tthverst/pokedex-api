@@ -7,34 +7,35 @@ var async = require('async');
 var acl;
 
 function getPokemons(req, res) {
-    var query = {};
-    if (req.params.id) {
-        query._id = req.params.id.toLowerCase();
-    }
-
-    Pokemon.find({}, function (err, data) {
+    Pokemon.find({}, function (err, pokemons) {
         if (err) { return handleError(err); }
-
-        if (req.params.id) {
-            data = data[0];
-        }
-        console.log(res);
-        res.json(data);
+        res.json(pokemons);
     });
 }
 
-router.route('/').get(getPokemons);
+function getPokemon(req, res) {
+    Pokemon.findById(req.params.name, function(err, pokemon) {
+        if (err) { return handleError(err); }
+        res.json(pokemon);
+    })
+}
+
+router.use(function (req, res, next) {
+    console.log("Pokemons are here!");
+    next();
+})
 
 router.route('/')
-    .get(function (req, res) {
-        res.render('pokemons', {
-            title: 'Pokemons',
-            pokemons: getPokemons
-        });
-    }
-    );
+    .get(getPokemons)
+// router.route('/')
+//     .get(function (req, res) {
+//         res.render('pokemons', {
+//             title: 'Pokemons'
+//         });
+//     }
+//     );
 
-router.route('/:name').get(getPokemons);
+router.route('/:name').get(getPokemon);
 
 module.exports = function (model, errCallback) {
     console.log('Initializing pokemons routing module');

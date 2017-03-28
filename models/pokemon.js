@@ -2,12 +2,12 @@ var _ = require('underscore');
 
 var init = function (mongoose) {
     var pokemonSchema = mongoose.Schema({
-        id      : Number,
-        name    : String,
-        weight  : Number,
-        height  : Number,
-        types   : [String],
-        stats   : {
+        id: Number,
+        name: String,
+        height: Number,
+        weight: Number,
+        types: [String],
+        stats: {
             "hp": Number,
             "attack": Number,
             "defence": Number,

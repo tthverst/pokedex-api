@@ -5,27 +5,27 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var session = require('express-session');
-var exphbs  = require('express-handlebars');
+var exphbs = require('express-handlebars');
 var flash = require('connect-flash');
 
 // Models
-    var model = {};
-    var mongoose = require('./config/database')();
-    model.User = require('./models/user')(mongoose);
-    model.Pokemon = require('./models/pokemon')(mongoose);
+var model = {};
+var mongoose = require('./config/database')();
+model.User = require('./models/user')(mongoose);
+model.Pokemon = require('./models/pokemon')(mongoose);
 
-    require('./models/fillTestData')(model);
+require('./models/fillTestData')(model);
 // Models
 
 // Passport
-    var passport = require('./auth/passport')(model.User);
+var passport = require('./auth/passport')(model.User);
 // Passport
 
 // Roles
-    var roles = require('./auth/connectroles')();
+var roles = require('./auth/connectroles')();
 // Roles
 
-function handleError(req, res, statusCode, message){
+function handleError(req, res, statusCode, message) {
     console.log();
     console.log('-------- Error handled --------');
     console.log('Request Params: ' + JSON.stringify(req.params));
@@ -37,52 +37,55 @@ function handleError(req, res, statusCode, message){
 };
 
 // Routes
-    var routes = require('./routes/index')(passport, model, roles);
-    var pokemons = require('./routes/pokemon')(model, handleError);
+var routes = require('./routes/index')(passport, model, roles);
+var pokemons = require('./routes/pokemon')(model, handleError);
 // /Routes
 
 var app = express();
 
 // view engine setup
-    app.set('views', path.join(__dirname, 'views/'));
-    app.engine('handlebars', exphbs({defaultLayout: 'main'}));
-    app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'views/'));
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+app.set('view engine', 'handlebars');
 
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: false }));
-    app.use(cookieParser());
-    app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // required for passport
-    app.use(session({ secret: 'thisisourpokeapi', resave: true, saveUninitialized: true })); // session secret
-    app.use(passport.initialize());
-    app.use(passport.session()); // persistent login sessions
-    app.use(flash()); // use connect-flash for flash messages stored in session
+app.use(session({ secret: 'thisisourpokeapi', resave: true, saveUninitialized: true })); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+app.use(flash()); // use connect-flash for flash messages stored in session
 // /required for passport
 
 // required for role based authorization
-    app.use(roles.middleware());
+app.use(roles.middleware());
 // /required for role based authorization
 
 // Routing
-    app.use('/', routes);
-    app.use('/pokemons', pokemons);
-    // app.use('/authors', roles.can('access authors'), authors);
+app.use('/', routes);
+app.use('/pokemons', pokemons);
+
+// API Routes
+app.use('/api/v1/pokemons', pokemons);
+// app.use('/api/v1/pokemons', { pokemons: pokemons, setHeaders: function (res, path) { res.set("content-type", "*/json") } });
 // /Routing
 
 // catch 404 and forward to error handler
-    app.use(function(req, res, next) {
-        var err = new Error('Not Found');
-        err.status = 404;
-        next(err);
-    });
+app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
 
 // error handlers
 
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
+    app.use(function (err, req, res, next) {
         console.log(err);
         res.status(err.status || 500);
         res.render('error', {
@@ -94,7 +97,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
