@@ -17,7 +17,7 @@ function fillTestPokemon(Pokemon, done) {
 	];
 
 	Pokemon.find({}, function (err, data) {
-		// Als er nog geen boeken zijn vullen we de testdata
+		// Als er nog geen pokemons zijn vullen we de testdata
 		if (data.length == 0) {
 			console.log('Creating pokemon testdata');
 
@@ -25,7 +25,29 @@ function fillTestPokemon(Pokemon, done) {
 				new Pokemon(pokemon).save(saveCallback);
 			});
 		} else {
-			console.log('Skipping create pokemon testdata, allready present');
+			console.log('Skipping create pokemon testdata, already present');
+		}
+	});
+
+	done();
+};
+
+function fillTestLocations(Location, done) {
+	var testData = [
+		{ id: 1, lat: 51.68865385, lng: 5.28696656, pokemon_id: 1 },
+		{ id: 2, lat: 51.69016364, lng: 5.29165506, pokemon_id: 10 }
+	];
+
+	Location.find({}, function (err, data) {
+		// Als er nog geen locaties zijn vullen we de testdata
+		if (data.length == 0) {
+			console.log('Creating location testdata');
+
+			testData.forEach(function (location) {
+				new Location(location).save(saveCallback);
+			});
+		} else {
+			console.log('Skipping create location testdata, already present');
 		}
 	});
 
@@ -34,6 +56,7 @@ function fillTestPokemon(Pokemon, done) {
 
 module.exports = function (model) {
 	async.waterfall([
-		function (done) { fillTestPokemon(model.Pokemon, done); }
+		function (done) { fillTestPokemon(model.Pokemon, done); },
+		function (done) { fillTestLocations(model.Location, done); }
 	]);
 }

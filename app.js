@@ -13,6 +13,7 @@ var model = {};
 var mongoose = require('./config/database')();
 model.User = require('./models/user')(mongoose);
 model.Pokemon = require('./models/pokemon')(mongoose);
+model.Location = require('./models/location')(mongoose);
 
 require('./models/fillTestData')(model);
 // Models
@@ -43,6 +44,7 @@ function handleError(req, res, statusCode, message) {
 // Routes
 var routes = require('./routes/index')(passport, model, roles);
 var pokemons = require('./routes/pokemon')(model, roles, handleError);
+var locations = require('./routes/location')(model, roles, handleError);
 // /Routes
 
 var app = express();
@@ -71,6 +73,7 @@ app.use(roles.middleware());
 // Routing
 app.use('/', routes);
 app.use('/pokemons', pokemons);
+app.use('/locations', locations);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

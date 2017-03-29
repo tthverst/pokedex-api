@@ -44,6 +44,9 @@ function hbsHelpers(hbs) {
 				}
 				
 				return text;
+			},
+			json: function (content) {
+				return JSON.stringify(content);
 			}
 		}
 	});
