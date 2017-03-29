@@ -6,7 +6,7 @@
 {{#each pokemons}}
 	<div class="col-sm-4">
 		<div class="well text-center">
-			<h3 class="text-center poke-name">{{this.name}} #{{padNumber this.id 3 '0'}}</h3>
+			<h3 class="text-center poke-name">{{this.name}} #{{pad this.id 2 0}}</h3>
 			<a data-toggle="tooltip" title="Click me!" onclick="$('#cry-{{this.id }}')[0].play();">
 				<img class="poke-img" src="./img/pokemon/{{this.id }}.png">
 			</a>
