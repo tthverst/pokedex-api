@@ -20,7 +20,7 @@ function getPokemons(req, res) {
 				res.status(200).send({ pokemons: pokemons });
 			}
 		});
-    });
+    }).sort( { id: 1 } );
 }
 
 function getPokemon(req, res) {
