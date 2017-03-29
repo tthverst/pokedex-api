@@ -13,7 +13,7 @@
 			<audio id="cry-{{this.id }}" ><source src="./media/sound/cries/{{this.id }}.ogg" type="audio/ogg"></audio>
 			<div class="row">
 				<div class="col-sm-12">
-					<h4>Type(s)</h4>
+					<h4>{{pluralise this.types 'Type'}}</h4>
 					<p>
 						{{#each this.types}}
 							<span class="badge {{this}}">{{this}}</span>
