@@ -33,6 +33,10 @@ function hbsHelpers(hbs) {
 				var s = String(character);
 				while (s.length < resultLength) {s = padChar + s;}
 				return s;
+			},
+			nl2br: function (text, isXhtml) {
+			  var breakTag = (isXhtml || typeof isXhtml === 'undefined') ? '<br />' : '<br>';
+			  return (text + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
 			}
 		}
 	});
