@@ -29,9 +29,9 @@ function hbsHelpers(hbs) {
 
 				return "NaN";
 			},
-			pad: function(character, padLength, padChar, options) {
+			pad: function(character, resultLength, padChar, options) {
 				var s = String(character);
-				while (s.length <= padLength) {s = padChar + s;}
+				while (s.length < resultLength) {s = padChar + s;}
 				return s;
 			}
 		}
