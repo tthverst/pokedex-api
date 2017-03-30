@@ -70,7 +70,7 @@ function myMap() {
 		});
 		
 		google.maps.event.addListener(map, 'click', function(event) {
-			var random = 15;//getRandomIntInclusive(1, 151);
+			var random = 1;//getRandomIntInclusive(1, 151);
 			
 			$.post( '/locations', { lat: event.latLng.lat(), lng: event.latLng.lng(), pokemon_id: random }, function() {
 			  window.location = '/locations';
