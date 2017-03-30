@@ -4,16 +4,16 @@
 </div>
 
 {{#each pokemons}}
-	<div class="col-sm-4">
+	<div class="col-xs-6 col-md-4">
 		<div class="well text-center">
-			<h3 class="text-center poke-name">{{this.name}} #{{padNumber this.id 3 '0'}}</h3>
+			<h3 class="text-center poke-name">{{this.name}} #{{pad this.id 3 0}}</h3>
 			<a data-toggle="tooltip" title="Click me!" onclick="$('#cry-{{this.id }}')[0].play();">
 				<img class="poke-img" src="./img/pokemon/{{this.id }}.png">
 			</a>
 			<audio id="cry-{{this.id }}" ><source src="./media/sound/cries/{{this.id }}.ogg" type="audio/ogg"></audio>
 			<div class="row">
 				<div class="col-sm-12">
-					<h4>Type(s)</h4>
+					<h4>{{pluralise this.types 'Type'}}</h4>
 					<p>
 						{{#each this.types}}
 							<span class="badge {{this}}">{{this}}</span>
@@ -42,7 +42,7 @@
 
 			<div class="row">
 				<div class="col-sm-12">
-					<p><span>{{this.flavour_text}}</span></p>
+					<p>{{{nl2br this.flavour_text}}}</p>
 				</div>
 			</div>
 			

@@ -16,15 +16,15 @@ function getPokemons(req, res) {
         if (err) { return handleError(err, res, 400, "Pokemons not found."); }
 
         res.format({
-            'text/html': function () {
-                res.status(200).render('pokemons.handlebars', { pokemons: pokemons });
-            },
-
-            '*/*': function () {
-                res.status(200).send({ pokemons: pokemons });
-            }
-        });
-    });
+			'text/html': function(){
+				res.status(200).render('pokemons.handlebars', { pokemons: pokemons });
+			},
+			
+			'*/*': function() {
+				res.status(200).send({ pokemons: pokemons });
+			}
+		});
+    }).sort( { id: 1 } );
 }
 
 function getPokemon(req, res) {
