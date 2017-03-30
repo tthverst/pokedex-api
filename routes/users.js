@@ -45,7 +45,7 @@ function patchUser(req, res) {
 function deleteUser(req, res) {
     User.remove({ "local.username": req.params.username }, function (err, user) {
         if (err) { return handleError(err, res, 400, "Pokemon is not removed."); }
-        res.status(200).send("Pokemon removed");
+        res.status(200).redirect('/users');
     });
 }
 

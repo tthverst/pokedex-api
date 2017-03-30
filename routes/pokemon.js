@@ -110,6 +110,6 @@ module.exports = function (model, role, errCallback) {
     router.route('/:name')
         .get(getPokemon)
         .delete(role.can("manage pokemons"), deletePokemon);
-
+        
     return router;
 }

@@ -19,13 +19,15 @@
                 {{#each users}}
                 <tr>
                     <form class="form-inline" action="/users/{{ this.local.username }}?_method=PATCH" method="POST">
-                        <td><input type="text" class="form-control" id="username" value="{{ this.local.username }}"></td>
+                        <td><input type="text" class="form-control" name="username" value="{{ this.local.username }}"></td>
                         <td><input type="email" class="form-control" value="{{ this.google.email }}" readonly></td>
                         <td><input type="email" class="form-control" value="{{ this.github.username }}" readonly></td>
                         <td>
-                            <select class="form-control" id="roles">
+                            <select class="form-control" name="roles">
+                                {{!--{{#select this.roles}}--}}
                                 <option value="player">Player</option>
                                 <option value="admin">Admin</option>
+                                {{!--{{/select}}--}}
                             </select>
                         </td>
                         <td>
