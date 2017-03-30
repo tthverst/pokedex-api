@@ -21,13 +21,52 @@ function getLocations(req, res) {
     });
 }
 
+function postLocation(req, res) {
+    var location = new Location();
+	
+    location.lat = req.body.lat;
+    location.lng = req.body.lng;
+    location.pokemon_id = req.body.pokemon_id;
+	
+    location.save(function (err) {
+        if (err) { console.log(err); return handleError(err, res, 400, "Location is not added."); }
+        res.status(201).send("Location created");
+    });
+}
+
+function patchLocation(req, res) {
+    Location.findOne({ "_id": req.params.locationID }, function (err, location) {
+        if (err) { return handleError(err, res, 404, "Location not found."); }
+
+        location.lat = req.body.lat;
+        location.lng = req.body.lng;
+
+        location.save(function (err) {
+            if (err) { return handleError(err, res, 400, "Location is not updated."); }
+			res.status(201).send("Location updated");
+        })
+    });
+}
+
+function deleteLocation(req, res) {
+    Location.remove({ "_id": req.params.locationID }, function (err, location) {
+        if (err) { return handleError(err, res, 400, "Location is not removed."); }
+        res.status(201).send("Location removed");
+    });
+}
+
 module.exports = function (model, role, errCallback) {
     Location = model.Location;
     handleError = errCallback;
 
     // Routing
     router.route('/')
-        .get(getLocations);
+        .get(getLocations)
+		.post(postLocation);
+		
+	router.route('/:locationID')
+        .patch(patchLocation)
+		.delete(deleteLocation);
 
     return router;
 }

@@ -15,7 +15,15 @@ module.exports = function () {
 		};
 		// Don't return false, this way we can get into the next checker.
 	});
-
+	
+	// Manage locations can only be done by admins
+	roles.use('manage location', function (req) {
+		if (req.user && req.user.hasAnyRole('admin')) {
+			return true;
+		};
+		// Don't return false, this way we can get into the next checker.
+	});
+	
 	// Admins can do everything
 	roles.use(function (req) {
 		if (req.user.hasAnyRole('admin')) {
