@@ -1,4 +1,5 @@
 var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var GitHubStatery = require('passport-github2');
 
@@ -25,6 +26,80 @@ var init = function (User) {
     });
 
     // =========================================================================
+    // LOCAL SIGNUP ============================================================
+    // =========================================================================
+    // we are using named strategies since we have one for login and one for signup
+    // by default, if there was no name, it would just be called 'local'
+
+    var localOptions = {
+        usernameField: 'username',
+        passwordField: 'password',
+        passReqToCallback: true
+    }
+
+    passport.use('local-signup', new LocalStrategy(localOptions, function (req, username, password, done) {
+
+        // asynchronous
+        // User.findOne wont fire unless data is sent back
+        process.nextTick(function () {
+
+            // find a user whose username is the same as the forms username
+            // we are checking to see if the user trying to login already exists
+            User.findOne({ 'local.username': username.toLowerCase() }, function (err, user) {
+                // if there are any errors, return the error
+                if (err)
+                    return done(err);
+
+                // check to see if theres already a user with that username
+                if (user) {
+                    return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
+                } else {
+
+                    // if there is no user with that username
+                    // create the user
+                    var newUser = new User();
+
+                    // set the user's local credentials
+                    newUser.local.username = username.toLowerCase();
+                    newUser.local.password = newUser.generateHash(password);
+
+                    // save the user
+                    newUser.save(function (err) {
+                        if (err)
+                            throw err;
+                        return done(null, newUser);
+                    });
+                }
+            });
+        });
+    }));
+
+    // =========================================================================
+    // LOCAL LOGIN =============================================================
+    // =========================================================================
+    // we are using named strategies since we have one for login and one for signup
+    // by default, if there was no name, it would just be called 'local'
+
+    passport.use('local-login', new LocalStrategy(localOptions, function (req, username, password, done) { // callback with username and password from our form
+
+        // find a user whose username is the same as the forms username
+        // we are checking to see if the user trying to login already exists
+        User.findOne({ 'local.username': username.toLowerCase() }, function (err, user) {
+            // if there are any errors, return the error before anything else
+            if (err)
+                return done(err);
+
+            // if no user is found, return the message
+            if (!user || !user.validPassword(password))
+                return done(null, false, req.flash('loginMessage', 'Oops! username/password incorrect.')); // create the loginMessage and save it to session as flashdata
+
+            // all is well, return successful user
+            return done(null, user);
+        });
+
+    }));
+
+    // =========================================================================
     // GOOGLE ==================================================================
     // =========================================================================
     var googleOptions = {
@@ -41,6 +116,7 @@ var init = function (User) {
             if (!req.user) {
                 // try to find the user based on their google id
                 User.findOne({ 'google.id': profile.id }, function (err, user) {
+                    console.log(user);
                     if (err)
                         return done(err);
 
@@ -59,23 +135,9 @@ var init = function (User) {
 
                         // if a user is found, log them in
                         return done(null, user);
-                    } else {
-                        // if the user isnt in our database, create a new user
-                        var newUser = new User();
-
-                        // set all of the relevant information
-                        newUser.google.id = profile.id;
-                        newUser.google.token = token;
-                        newUser.google.name = profile.displayName;
-                        newUser.google.email = profile.emails[0].value; // pull the first email
-
-                        // save the user
-                        newUser.save(function (err) {
-                            if (err)
-                                throw err;
-                            return done(null, newUser);
-                        });
                     }
+
+                    return done(null, false, req.flash('loginMessage', 'Please sign-up with a local account first.'));
                 });
 
             } else {
@@ -137,23 +199,9 @@ var init = function (User) {
 
                         // if a user is found, log them in
                         return done(null, user);
-                    } else {
-                        // if the user isnt in our database, create a new user
-                        var newUser = new User();
-
-                        // set all of the relevant information
-                        newUser.github.id = profile.id;
-                        newUser.github.token = token;
-                        newUser.github.name = profile.displayName;
-                        newUser.github.username = profile.username;
-
-                        // save the user
-                        newUser.save(function (err) {
-                            if (err)
-                                throw err;
-                            return done(null, newUser);
-                        });
                     }
+
+                    return done(null, false, req.flash('loginMessage', 'Please sign-up with a local account first.'));
                 });
 
             } else {

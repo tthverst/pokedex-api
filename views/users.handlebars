@@ -1,0 +1,45 @@
+<div class="page-header text-center">
+    <h1>Users</h1>
+</div>
+
+<div class="col-md-12">
+    <div class="well">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Google e-mail</th>
+                    <th>Github username</th>
+                    <th>Role(s)</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each users}}
+                <tr>
+                    <form class="form-inline" action="/users/{{ this.local.username }}?_method=PATCH" method="POST">
+                        <td><input type="text" class="form-control" id="username" value="{{ this.local.username }}"></td>
+                        <td><input type="email" class="form-control" value="{{ this.google.email }}" readonly></td>
+                        <td><input type="email" class="form-control" value="{{ this.github.username }}" readonly></td>
+                        <td>
+                            <select class="form-control" id="roles">
+                                <option value="player">Player</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </td>
+                    </form>
+                    <form class="form-inline" action="/users/{{ this.local.username }}?_method=DELETE" method="POST">
+                        <td>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </td>
+                    </form>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express();
 
-module.exports = function (passport) {
+module.exports = function (passport, model, role) {
 	/* GET home page. */
 	router.route('/')
 		.get(function (req, res, next) {
@@ -19,13 +19,49 @@ module.exports = function (passport) {
 		});
 
 	router.route('/profile')
-		.get(function (req, res) {
+		.get(role.can("access profile page"),function (req, res) {
 			res.render('profile', {
 				title: 'Your profile',
 				user: req.user // get the user out of session and pass to template
 			});
 		}
 		);
+
+	// =====================================
+	// LOCAL LOGIN =========================
+	// =====================================
+	// show the login form
+	router.route('/login')
+		.get(function (req, res) {
+			// render the page and pass in any flash data if it exists
+			res.render('login', { message: req.flash('loginMessage') });
+		});
+
+	// process the login form
+	router.route('/login')
+		.post(passport.authenticate('local-login', {
+			successRedirect: '/profile', // redirect to the secure profile section
+			failureRedirect: '/login', // redirect back to the signup page if there is an error
+			failureFlash: true // allow flash messages
+		}));
+
+	// =====================================
+	// LOCAL SIGNUP ========================
+	// =====================================
+	// show the signup form
+	router.route('/signup')
+		.get(function (req, res) {
+			// render the page and pass in any flash data if it exists
+			res.render('signup', { signupMessage: req.flash('signupMessage'), loginMessage: req.flash('loginMessage') });
+		});
+
+	// process the signup form
+	router.route('/signup')
+		.post(passport.authenticate('local-signup', {
+			successRedirect: '/profile', // redirect to the secure profile section
+			failureRedirect: '/signup', // redirect back to the signup page if there is an error
+			failureFlash: true // allow flash messages
+		}));
 
 	// =====================================
 	// GOOGLE ROUTES =======================
@@ -38,7 +74,7 @@ module.exports = function (passport) {
 
 	// the callback after google has authenticated the user
 	router.route('/auth/google/callback')
-		.get(passport.authenticate('google', { successRedirect: '/profile', failureRedirect: '/' }));
+		.get(passport.authenticate('google', { successRedirect: '/profile', failureRedirect: '/signup', failureFlash: true }));
 
 
 	router.route('/connect/google')
@@ -68,7 +104,7 @@ module.exports = function (passport) {
 
 	// the callback after github has authenticated the user
 	router.route('/auth/github/callback')
-		.get(passport.authenticate('github', { successRedirect: '/profile', failureRedirect: '/' }));
+		.get(passport.authenticate('github', { successRedirect: '/profile', failureRedirect: '/signup', failureFlash: true }));
 
 	router.route('/connect/github')
 		.get(passport.authorize('github', { scope: ['user:email'] }));

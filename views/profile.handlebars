@@ -4,8 +4,22 @@
 </div>
 
 <div class="row">
+
+    <!-- LOCAL INFORMATION -->
+    <div class="col-md-12">
+        <div class="well">
+            <h3><span class="fa fa-user"></span> Local</h3>
+            <p>
+                <strong>id</strong>: {{ user._id }}<br>
+                <strong>username</strong>: {{ user.local.username }}<br>
+                <strong>password</strong>: {{ user.local.password }}<br>
+                <strong>roles</strong>: {{ user.roles }}                
+            </p>
+        </div>
+    </div>
+
     <!-- GOOGLE INFORMATION -->
-    <div class="col-sm-6">
+    <div class="col-md-6">
         <div class="well">
             <h3><span class="fa fa-google"></span> Google</h3>
             <!-- check if the user has this token (is the user authenticated with this social account) -->
@@ -14,7 +28,7 @@
                 <strong>id</strong>: {{ user.google.id }}<br>
                 <strong>token</strong>: {{ user.google.token }}<br>
                 <strong>email</strong>: {{ user.google.email }}<br>
-                <strong>name</strong>: {{ user.google.name }}
+                <strong>name</strong>: {{ user.google.name }}<br>
             </p>
 
             <a href="/unlink/google" class="btn btn-danger">Unlink</a> {{else}}
@@ -24,7 +38,7 @@
     </div>
 
     <!-- GITHUB INFORMATION -->
-    <div class="col-sm-6">
+    <div class="col-md-6">
         <div class="well">
             <h3><span class="fa fa-github"></span> Github</h3>
             <!-- check if the user has this token (is the user authenticated with this social account) -->
@@ -33,7 +47,7 @@
                 <strong>id</strong>: {{ user.github.id }}<br>
                 <strong>token</strong>: {{ user.github.token }}<br>
                 <strong>username</strong>: {{ user.github.username }}<br>
-                <strong>name</strong>: {{ user.github.name }}
+                <strong>name</strong>: {{ user.github.name }}<br>
             </p>
 
             <a href="/unlink/github" class="btn btn-danger">Unlink</a> {{else}}

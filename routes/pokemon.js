@@ -1,36 +1,50 @@
 var express = require('express');
 var router = express();
 var path = require('path');
-var Pokemon;
 var _ = require('underscore');
 var handleError;
 var async = require('async');
-var acl;
+var request = require('request');
+
+var jsdom = require('jsdom').jsdom;
+var doc = jsdom();
+var window = doc.defaultView;
+var $ = require('jquery')(window);
 
 function getPokemons(req, res) {
     Pokemon.find({}, function (err, pokemons) {
-        if (err) { return handleError(err, res, 400, "Pokemons not found."); }		
-		
+        if (err) { return handleError(err, res, 400, "Pokemons not found."); }
+
         res.format({
-			'text/html': function(){
-				res.status(200).render('pokemons.handlebars', { pokemons: pokemons });
-			},
-			
-			'*/*': function() {
-				res.status(200).send({ pokemons: pokemons });
-			}
-		});
+            'text/html': function () {
+                res.status(200).render('pokemons.handlebars', { pokemons: pokemons });
+            },
+
+            '*/*': function () {
+                res.status(200).send({ pokemons: pokemons });
+            }
+        });
     });
 }
 
 function getPokemon(req, res) {
     Pokemon.find({ "name": req.params.name.toLowerCase() }, function (err, pokemon) {
         if (err) { return handleError(err, res, 404, "Pokemon not found."); }
-        res.status(200).json(pokemon);
+
+        if ($.isEmptyObject(pokemon)) {
+            request("http://pokeapi.co/api/v2/pokemon/" + req.params.name.toLowerCase(), function (err, response, body) {
+                console.log("error:", err);
+                console.log("statusCode:", response && response.statusCode);
+                console.log("body:", body);
+            });
+        } else {
+            res.status(200).json(pokemon);
+        }
     });
 }
 
 function postPokemon(req, res) {
+    console.log("Create pokemon");
     var pokemon = new Pokemon();
 
     pokemon.id = req.body.pokemon_id;
@@ -68,7 +82,7 @@ function putPokemon(req, res) {
 }
 
 function deletePokemon(req, res) {
-    Pokemon.remove({ "name": req.params.name.toLowerCase() }, function (err, bear) {
+    Pokemon.remove({ "name": req.params.name.toLowerCase() }, function (err, pokemon) {
         if (err) { return handleError(err, res, 400, "Pokemon is not removed."); }
         res.status(200).send("Pokemon removed");
     });
@@ -81,11 +95,11 @@ module.exports = function (model, role, errCallback) {
     // Routing
     router.route('/')
         .get(getPokemons)
-        .post(role.can("manage pokemon"), postPokemon);
+        .post(role.can("manage pokemons"), postPokemon);
 
     router.route('/:name')
         .get(getPokemon)
-        .delete(role.can("manage pokemon"),deletePokemon);
+        .delete(role.can("manage pokemons"), deletePokemon);
 
     return router;
 }
