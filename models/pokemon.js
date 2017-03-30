@@ -10,12 +10,12 @@ var init = function (mongoose) {
         stats: {
             "hp": { type: Number, required: true },
             "attack": { type: Number, required: true },
-            "defence": { type: Number, required: true },
-            "sp-atk": { type: Number, required: true },
-            "sp-def": { type: Number, required: true },
+            "defense": { type: Number, required: true },
+            "special-attack": { type: Number, required: true },
+            "special-defense": { type: Number, required: true },
             "speed": { type: Number, required: true }
         },
-        capture_rate: { type: Number, required: true },
+        capture_rate: { type: Number },
         flavour_text: { type: String }
     });
 

@@ -28,12 +28,6 @@ function getUser(req, res) {
     });
 }
 
-function postUser(req, res) {
-    var user = new User();
-
-
-}
-
 function patchUser(req, res) {
     User.findOne({ "local.username": req.params.username }, function (err, user) {
         if (err) { return handleError(err, res, 404, "User not found."); }
@@ -42,7 +36,7 @@ function patchUser(req, res) {
         user.roles = [req.body.roles];
 
         user.save(function (err) {
-            if (err) { return handleError(err, res, 400, "User is not updated. You might have chosen an username that already exists."); }
+            if (err) { return err }
             res.status(200).redirect('/users');
         })
     });

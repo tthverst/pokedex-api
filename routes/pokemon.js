@@ -32,11 +32,13 @@ function getPokemon(req, res) {
         if (err) { return handleError(err, res, 404, "Pokemon not found."); }
 
         if ($.isEmptyObject(pokemon)) {
-            request("http://pokeapi.co/api/v2/pokemon/" + req.params.name.toLowerCase(), function (err, response, body) {
-                console.log("error:", err);
-                console.log("statusCode:", response && response.statusCode);
-                console.log("body:", body);
-            });
+            request.get("http://pokeapi.co/api/v2/pokemon/" + req.params.name.toLowerCase())
+                .on('error', function (err) {
+                    return handleError(err, res, 404, "Pokemon not found.");
+                })
+                .pipe(request.post("http://" + req.hostname + ":8080/pokemons", function () {
+                    res.redirect("http://" + req.hostname + ":8080/pokemons");
+                }));
         } else {
             res.status(200).json(pokemon);
         }
@@ -44,17 +46,24 @@ function getPokemon(req, res) {
 }
 
 function postPokemon(req, res) {
-    console.log("Create pokemon");
     var pokemon = new Pokemon();
 
-    pokemon.id = req.body.pokemon_id;
+    pokemon.id = req.body.id;
     pokemon.name = req.body.name;
     pokemon.height = req.body.height;
     pokemon.weight = req.body.weight;
-    pokemon.types = req.body.types;
-    pokemon.stats = req.body.stats;
-    pokemon.capture_rate = req.body.capture_rate;
-    pokemon.flavour_text = req.body.flavour_text;
+    pokemon.types = [];
+    pokemon.stats = {};
+    // pokemon.capture_rate = req.body.capture_rate;
+    // pokemon.flavour_text = req.body.flavour_text;
+
+    $.each(req.body.types, function (index, type) {
+        pokemon.types.push(type.type.name);
+    });
+
+    $.each(req.body.stats, function (index, stat) {
+        pokemon.stats[stat.stat.name] = stat.base_stat;
+    });
 
     pokemon.save(function (err) {
         if (err) { return handleError(err, res, 400, "Pokemon is not added. You might have chosen an ID or name that already exists."); }
@@ -95,7 +104,8 @@ module.exports = function (model, role, errCallback) {
     // Routing
     router.route('/')
         .get(getPokemons)
-        .post(role.can("manage pokemons"), postPokemon);
+        .post(postPokemon);
+    // .post(role.can("manage pokemons"), postPokemon);
 
     router.route('/:name')
         .get(getPokemon)
