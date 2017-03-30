@@ -48,7 +48,12 @@ function getPokemon(req, res) {
 function postPokemon(req, res) {
     var pokemon = new Pokemon();
 
+<<<<<<< Updated upstream
     pokemon.id = req.body.id;
+=======
+    console.log(req.body);
+    pokemon.id = req.body.pokemon_id;
+>>>>>>> Stashed changes
     pokemon.name = req.body.name;
     pokemon.height = req.body.height;
     pokemon.weight = req.body.weight;
