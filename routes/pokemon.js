@@ -13,18 +13,29 @@ var $ = require('jquery')(window);
 
 function getPokemons(req, res) {
     var query = {};
+    var limit = 10;
+    var page = 1;
 
-    if (req.params.name) { query.name = req.params.name; }
-    if (req.query.type) { query.types = req.query.type; }
-    if (req.query.capture_rate) { query.capture_rate = req.query.capture_rate; }
+    if (req.params.name) { query.name = req.params.name; };
+    if (req.query.type) { query.types = req.query.type; };
+    if (req.query.capture_rate) { query.capture_rate = req.query.capture_rate; };
+    if (req.query.heigth) { query.heigth = parseInt(req.query.heigth); };
+    if (req.query.weigth) { query.weigth = req.query.weight; };
 
     var result = Pokemon.find(query);
+
+    if (req.query.limit) { limit = parseInt(req.query.limit); }
+    result.limit(limit);
+
+    if (req.query.page) { page = parseInt(req.query.page); }
+    result.skip((page - 1) * limit);
+
     result.sort({ id: 1 });
 
     result.exec(function (err, pokemons) {
         if (err) { return handleError(err, res, 400, "Pokemons not found."); }
 
-        if ($.isEmptyObject(pokemons)) {
+        if ($.isEmptyObject(pokemons) && query === {}) {
             getPokemonFromPokeApi(req, res);
         } else {
             res.format({
@@ -50,7 +61,7 @@ function getPokemonFromPokeApi(req, res) {
 
             r.on('end', function () {
                 r = request("http://pokeapi.co/api/v2/pokemon-species/" + req.params.name.toLowerCase())
-                
+
                 r.on('response', function (response) {
                     r.pipe(request.patch("http://" + req.hostname + ":8080/pokemons/" + req.params.name.toLowerCase(), function () {
                         res.redirect("http://" + req.hostname + ":8080/pokemons/" + req.params.name.toLowerCase());
