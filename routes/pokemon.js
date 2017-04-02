@@ -16,15 +16,15 @@ function getPokemons(req, res) {
         if (err) { return handleError(err, res, 400, "Pokemons not found."); }
 
         res.format({
-			'text/html': function(){
-				res.status(200).render('pokemons.handlebars', { pokemons: pokemons });
-			},
-			
-			'*/*': function() {
-				res.status(200).send({ pokemons: pokemons });
-			}
-		});
-    }).sort( { id: 1 } );
+            'text/html': function () {
+                res.status(200).render('pokemons.handlebars', { pokemons: pokemons });
+            },
+
+            '*/*': function () {
+                res.status(200).send({ pokemons: pokemons });
+            }
+        });
+    }).sort({ id: 1 });
 }
 
 function getPokemon(req, res) {
@@ -32,13 +32,19 @@ function getPokemon(req, res) {
         if (err) { return handleError(err, res, 404, "Pokemon not found."); }
 
         if ($.isEmptyObject(pokemon)) {
-            request.get("http://pokeapi.co/api/v2/pokemon/" + req.params.name.toLowerCase())
-                .on('error', function (err) {
-                    return handleError(err, res, 404, "Pokemon not found.");
-                })
-                .pipe(request.post("http://" + req.hostname + ":8080/pokemons", function () {
-                    res.redirect("http://" + req.hostname + ":8080/pokemons");
-                }));
+            var r = request("http://pokeapi.co/api/v2/pokemon/" + req.params.name.toLowerCase())
+
+            r.on('response', function (response) {
+                console.log(response.statusCode)
+
+                if (response.statusCode === 200) {
+                    r.pipe(request.post("http://" + req.hostname + ":8080/pokemons", function () {
+                        res.redirect("http://" + req.hostname + ":8080/pokemons/" + req.params.name.toLowerCase())
+                    }));
+                } else {
+                    res.send("Pokemon not found.");
+                }
+            });
         } else {
             res.status(200).json(pokemon);
         }
