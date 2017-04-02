@@ -42,7 +42,7 @@ function getPokemons(req, res) {
                 'text/html': function () {
                     res.status(200).render('pokemons.handlebars', {
                         pokemons: pokemons,
-                        prevPage: page - 1 > 0 ? page - 1 : null,
+                        prevPage: page - 1 >= 0 ? page - 1 : null,
                         nextPage: pokemons.length >= limit ? page + 1 : null,
                         limit: limit,
                         showButtons: query.name ? false : true
