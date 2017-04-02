@@ -35,7 +35,7 @@ function getPokemons(req, res) {
     result.exec(function (err, pokemons) {
         if (err) { return handleError(err, res, 400, "Pokemons not found."); }
 
-        if ($.isEmptyObject(pokemons) && query === {}) {
+        if ($.isEmptyObject(pokemons) && query.name) {
             getPokemonFromPokeApi(req, res);
         } else {
             res.format({
