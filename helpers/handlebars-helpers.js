@@ -34,9 +34,8 @@ function hbsHelpers(hbs) {
 				while (s.length < resultLength) { s = padChar + s; }
 				return s;
 			},
-			nl2br: function (text, isXhtml) {
-				var breakTag = (isXhtml || typeof isXhtml === 'undefined') ? '<br />' : '<br>';
-				return (text + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+			f2sp: function (text) {
+				return text.replace(/([^>\f]?)(\f)/g, '$1 $2');
 			},
 			pluralise: function (array, text) {
 				if (array.length > 1) {
