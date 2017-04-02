@@ -24,10 +24,8 @@
                         <td><input type="email" class="form-control" value="{{ this.github.username }}" readonly></td>
                         <td>
                             <select class="form-control" name="roles">
-                                {{!--{{#select this.roles}}--}}
-                                <option value="player">Player</option>
-                                <option value="admin">Admin</option>
-                                {{!--{{/select}}--}}
+                                <option value="player" {{selected 'player'}}>Player</option>
+                                <option value="admin" {{selected 'admin'}}>Admin</option>
                             </select>
                         </td>
                         <td>
