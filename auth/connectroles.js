@@ -24,7 +24,7 @@ module.exports = function () {
 		};
 	});
 
-	roles.use('pokemon management', function (req) {
+	roles.use('delete pokemons', function (req) {
 		if (req.user && req.user.hasAnyRole('admin')) {
 			return true;
 		};

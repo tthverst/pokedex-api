@@ -12,41 +12,53 @@ var window = doc.defaultView;
 var $ = require('jquery')(window);
 
 function getPokemons(req, res) {
-    Pokemon.find({}, function (err, pokemons) {
+    var query = {};
+
+    if (req.params.name) { query.name = req.params.name; }
+    if (req.query.type) { query.types = req.query.type; }
+    if (req.query.capture_rate) { query.capture_rate = req.query.capture_rate; }
+
+    var result = Pokemon.find(query);
+    result.sort({ id: 1 });
+
+    result.exec(function (err, pokemons) {
         if (err) { return handleError(err, res, 400, "Pokemons not found."); }
 
-        res.format({
-            'text/html': function () {
-                res.status(200).render('pokemons.handlebars', { pokemons: pokemons });
-            },
+        if ($.isEmptyObject(pokemons)) {
+            getPokemonFromPokeApi(req, res);
+        } else {
+            res.format({
+                'text/html': function () {
+                    res.status(200).render('pokemons.handlebars', { pokemons: pokemons });
+                },
 
-            '*/*': function () {
-                res.status(200).send({ pokemons: pokemons });
-            }
-        });
-    }).sort({ id: 1 });
-}
-
-function getPokemon(req, res) {
-    Pokemon.find({ "name": req.params.name.toLowerCase() }, function (err, pokemon) {
-        if (err) { return handleError(err, res, 404, "Pokemon not found."); }
-
-        if ($.isEmptyObject(pokemon)) {
-            var r = request("http://pokeapi.co/api/v2/pokemon/" + req.params.name.toLowerCase())
-
-            r.on('response', function (response) {
-                console.log(response.statusCode)
-
-                if (response.statusCode === 200) {
-                    r.pipe(request.post("http://" + req.hostname + ":8080/pokemons", function () {
-                        res.redirect("http://" + req.hostname + ":8080/pokemons/" + req.params.name.toLowerCase())
-                    }));
-                } else {
-                    res.send("Pokemon not found.");
+                '*/*': function () {
+                    res.status(200).send({ pokemons: pokemons });
                 }
             });
+        };
+    });
+}
+
+function getPokemonFromPokeApi(req, res) {
+    var r = request("http://pokeapi.co/api/v2/pokemon/" + req.params.name.toLowerCase())
+
+    r.on('response', function (response) {
+
+        if (response.statusCode === 200) {
+            r.pipe(request.post("http://" + req.hostname + ":8080/pokemons"));
+
+            r.on('end', function () {
+                r = request("http://pokeapi.co/api/v2/pokemon-species/" + req.params.name.toLowerCase())
+                
+                r.on('response', function (response) {
+                    r.pipe(request.patch("http://" + req.hostname + ":8080/pokemons/" + req.params.name.toLowerCase(), function () {
+                        res.redirect("http://" + req.hostname + ":8080/pokemons/" + req.params.name.toLowerCase());
+                    }));
+                });
+            });
         } else {
-            res.status(200).json(pokemon);
+            res.send("Pokemon not found.");
         }
     });
 }
@@ -60,8 +72,6 @@ function postPokemon(req, res) {
     pokemon.weight = req.body.weight;
     pokemon.types = [];
     pokemon.stats = {};
-    // pokemon.capture_rate = req.body.capture_rate;
-    // pokemon.flavour_text = req.body.flavour_text;
 
     $.each(req.body.types, function (index, type) {
         pokemon.types.push(type.type.name);
@@ -77,21 +87,21 @@ function postPokemon(req, res) {
     });
 }
 
-function putPokemon(req, res) {
+function patchPokemon(req, res) {
     Pokemon.findOne({ "name": req.params.name.toLowerCase() }, function (err, pokemon) {
         if (err) { return handleError(err); }
 
-        pokemon.name = req.body.name;
-        pokemon.height = req.body.height;
-        pokemon.weight = req.body.weight;
-        pokemon.types = req.body.types;
-        pokemon.stats = req.body.stats;
         pokemon.capture_rate = req.body.capture_rate;
-        pokemon.flavour_text = req.body.flavour_text;
+
+        $.each(req.body.flavor_text_entries, function (index, entry) {
+            if (entry.version.name === "red") {
+                pokemon.flavour_text = entry.flavor_text
+            };
+        });
 
         pokemon.save(function (err) {
-            if (err) { return handleError(err, res, 400, "Pokemon is not updated. You might have chosen an name that already exists."); }
-            res.status(200).json(pokemon);
+            if (err) { return handleError(err, res, 400, "Pokemon is not updated."); }
+            res.status(201).send("Pokemon updated");
         });
     });
 }
@@ -111,11 +121,11 @@ module.exports = function (model, role, errCallback) {
     router.route('/')
         .get(getPokemons)
         .post(postPokemon);
-    // .post(role.can("manage pokemons"), postPokemon);
 
     router.route('/:name')
-        .get(getPokemon)
-        .delete(role.can("manage pokemons"), deletePokemon);
+        .get(getPokemons)
+        .patch(patchPokemon)
+        .delete(role.can("delete pokemons"), deletePokemon);
 
     return router;
 }
