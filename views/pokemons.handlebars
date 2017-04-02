@@ -1,85 +1,95 @@
 <div class="page-header text-center">
-		<img class="pokeball" src="./img/pokeball.svg">
-		<h1> Pokémons </h1>
+	<img class="pokeball" src="/img/pokeball.svg">
+	<h1> Pokémons </h1>
 </div>
 
 {{#each pokemons}}
-	<div class="col-xs-6 col-md-4">
-		<div class="well text-center">
-			<h3 class="text-center poke-name">{{this.name}} #{{pad this.id 3 0}}</h3>
-			<a data-toggle="tooltip" title="Click me!" onclick="$('#cry-{{this.id }}')[0].play();">
-				<img class="poke-img" src="./img/pokemon/{{this.id }}.png">
-			</a>
-			<audio id="cry-{{this.id }}" ><source src="./media/sound/cries/{{this.id }}.ogg" type="audio/ogg"></audio>
-			<div class="row">
-				<div class="col-sm-12">
-					<h4>{{pluralise this.types 'Type'}}</h4>
-					<p>
-						{{#each this.types}}
-							<span class="badge {{this}}">{{this}}</span>
-						{{/each}}
-					</p>
-				</div>
+<div class="col-xs-6 col-md-4">
+	<div class="well text-center">
+		<h3 class="text-center poke-name">{{this.name}} #{{pad this.id 3 0}}</h3>
+		<a data-toggle="tooltip" title="Click me!" onclick="$('#cry-{{this.id }}')[0].play();">
+			<img class="poke-img" src="/img/pokemon/{{this.id }}.png">
+		</a>
+		<audio id="cry-{{this.id }}">
+			<source src="/media/sound/cries/{{this.id }}.ogg" type="audio/ogg">
+		</audio>
+		<div class="row">
+			<div class="col-sm-12">
+				<h4>{{pluralise this.types 'Type'}}</h4>
+				<p>
+					{{#each this.types}}
+					<span class="badge {{this}}">{{this}}</span> {{/each}}
+				</p>
 			</div>
+		</div>
 
-			<div class="row">
-				<div class="col-sm-12">
-					<h4>Capture rate (0-255)</h4>
-					<p><span>{{this.capture_rate}}</span></p>
-				</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<h4>Capture rate (0-255)</h4>
+				<p><span>{{this.capture_rate}}</span></p>
 			</div>
+		</div>
 
-			<div class="row">
+		<div class="row">
+			<div class="col-sm-6">
+				<h4>Height</h4>
+				<p>{{divide this.height 10}} m</p>
+			</div>
+			<div class="col-sm-6">
+				<h4>Weight</h4>
+				<p>{{divide this.weight 10}} kg</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<p>{{{nl2br this.flavour_text}}}</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<h4>Stats</h4>
 				<div class="col-sm-6">
-					<h4>Height</h4>
-					<p>{{divide this.height 10}} m</p>
-				</div>
-				<div class="col-sm-6">
-					<h4>Weight</h4>
-					<p>{{divide this.weight 10}} kg</p>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-sm-12">
-					<p>{{{nl2br this.flavour_text}}}</p>
-				</div>
-			</div>
-			
-			<div class="row">
-				<div class="col-sm-12">
-					<h4>Stats</h4>
-					<div class="col-sm-6">
-						<h4>HP:</p>
+					<h4>HP:</p>
 						<h4>Attack:</h4>
-						<h4>Defence:</h4>
+						<h4>Defense:</h4>
 						<h4>Sp.Atk:</h4>
 						<h4>Sp.Def:</h4>
 						<h4>Speed:</h4>
-					</div>
-					<div class="col-sm-6">
-						<p>{{this.stats.hp}}</p>
-						<p>{{this.stats.attack}}</p>
-						<p>{{this.stats.defence}}</p>
-						<p>{{this.stats.sp-atk}}</p>
-						<p>{{this.stats.sp-def}}</p>
-						<p>{{this.stats.speed}}</p>
-					</div>
+				</div>
+				<div class="col-sm-6">
+					<p>{{this.stats.hp}}</p>
+					<p>{{this.stats.attack}}</p>
+					<p>{{this.stats.defense}}</p>
+					<p>{{this.stats.special-attack}}</p>
+					<p>{{this.stats.special-defense}}</p>
+					<p>{{this.stats.speed}}</p>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
 {{/each}}
 
+{{length}}
+
+{{#if showButtons}}
+<div class="col-lg-12 text-center">
+	<div class="well">
+		{{#if prevPage}}
+		<a class="btn btn-primary" href="?page={{prevPage}}&limit={{limit}}">Previous page</a>
+		{{/if}}
+		{{#if nextPage}}		
+		<a class="btn btn-primary" href="?page={{nextPage}}&limit={{limit}}">Next page</a>
+		{{/if}}		
+	</div>
+</div>
+{{/if}}
+
 <script>
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();   
-});
+	$(document).ready(function () {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
+
 </script>
-
-
-
-
-
-
-
