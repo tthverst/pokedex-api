@@ -40,7 +40,13 @@ function getPokemons(req, res) {
         } else {
             res.format({
                 'text/html': function () {
-                    res.status(200).render('pokemons.handlebars', { pokemons: pokemons });
+                    res.status(200).render('pokemons.handlebars', {
+                        pokemons: pokemons,
+                        prevPage: page - 1 > 0 ? page - 1 : null,
+                        nextPage: pokemons.length >= limit ? page + 1 : null,
+                        limit: limit,
+                        showButtons: pokemons.length > 1 ? true : false
+                    });
                 },
 
                 '*/*': function () {
