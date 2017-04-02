@@ -46,7 +46,7 @@ function hbsHelpers(hbs) {
 				return text;
 			},
 			selected: function (value) {
-				var role = this.roles[0];
+				var role = this.role;
 				
 				if(value === role) {
 					return "selected";

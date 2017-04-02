@@ -34,7 +34,7 @@ function fillTestPokemon(Pokemon, done) {
 
 function fillTestUser(User, done) {
 	var adminUser = new User();
-	adminUser.roles = ["admin"];
+	adminUser.role = "admin";
 	adminUser.local = { "username": "admin", "password": adminUser.generateHash("admin") }
 
 	User.findOne({ "local.username": "admin" }, function (err, data) {

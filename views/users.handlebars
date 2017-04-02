@@ -10,7 +10,7 @@
                     <th>Username</th>
                     <th>Google e-mail</th>
                     <th>Github username</th>
-                    <th>Role(s)</th>
+                    <th>Role</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -23,7 +23,7 @@
                         <td><input type="email" class="form-control" value="{{ this.google.email }}" readonly></td>
                         <td><input type="email" class="form-control" value="{{ this.github.username }}" readonly></td>
                         <td>
-                            <select class="form-control" name="roles">
+                            <select class="form-control" name="role">
                                 <option value="player" {{selected 'player'}}>Player</option>
                                 <option value="admin" {{selected 'admin'}}>Admin</option>
                             </select>

@@ -19,7 +19,7 @@ var init = function (mongoose) {
             username: String,
             name: String
         },
-        roles: { type: [String], default: ["player"], required: true },
+        role: { type: String, default: "player", required: true },
         pokemons: [Number]
     });
 
@@ -29,39 +29,6 @@ var init = function (mongoose) {
 
     userSchema.methods.validPassword = function (password) {
         return bcrypt.compareSync(password, this.local.password);
-    };
-
-    userSchema.methods.hasAnyRole = function (roles) {
-        if (!Array.isArray(roles)) {
-            roles = [roles];
-        }
-
-        var lowerCaseRoles = _.map(this.roles, function (role) { return role.toLowerCase(); });
-        for (var index in roles) {
-            console.log(index);
-            if (_.contains(lowerCaseRoles, roles[index].toLowerCase())) {
-                // If any role matches, it's allright, we can return true;
-                return true;
-            }
-        };
-
-        return false;
-    };
-
-    userSchema.methods.hasAllRoles = function (roles) {
-        if (!Array.isArray(roles)) {
-            roles = [roles];
-        }
-
-        var lowerCaseRoles = _.map(this.roles, function (role) { return role.toLowerCase(); });
-        for (var index in roles) {
-            if (!_.contains(lowerCaseRoles, roles[index].toLowerCase())) {
-                // If any role doesn't match, we can return false.
-                return false;
-            }
-        };
-
-        return true;
     };
 
     return mongoose.model('User', userSchema);

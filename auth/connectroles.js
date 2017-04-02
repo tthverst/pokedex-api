@@ -13,7 +13,7 @@ module.exports = function () {
 
 	// Admins can do everything
 	roles.use(function (req) {
-		if (req.user && req.user.hasAnyRole('admin')) {
+		if (req.user && req.user.role === 'admin') {
 			return true;
 		};
 	});
@@ -25,13 +25,13 @@ module.exports = function () {
 	});
 
 	roles.use('delete pokemons', function (req) {
-		if (req.user && req.user.hasAnyRole('admin')) {
+		if (req.user && req.user.role === 'admin') {
 			return true;
 		};
 	});
 
 	roles.use('user management', function (req) {
-		if (req.user && req.user.hasAnyRole('admin')) {
+		if (req.user && req.user.role === 'admin') {
 			return true;
 		};
 	});

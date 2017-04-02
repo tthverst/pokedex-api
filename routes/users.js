@@ -33,7 +33,7 @@ function patchUser(req, res) {
         if (err) { return handleError(err, res, 404, "User not found."); }
 
         user.local.username = req.body.username;
-        user.roles = [req.body.roles];
+        user.role = req.body.role;
 
         user.save(function (err) {
             if (err) { return err }
