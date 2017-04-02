@@ -45,7 +45,7 @@ function getPokemons(req, res) {
                         prevPage: page - 1 > 0 ? page - 1 : null,
                         nextPage: pokemons.length >= limit ? page + 1 : null,
                         limit: limit,
-                        showButtons: pokemons.length > 1 ? true : false
+                        showButtons: query.name ? false : true
                     });
                 },
 
