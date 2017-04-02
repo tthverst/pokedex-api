@@ -2,6 +2,7 @@
   "name": "PokeApi",
   "version": "1.0.0",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.17.1",
     "connect-flash": "^0.1.1",
     "connect-roles": "^3.1.2",
@@ -9,10 +10,15 @@
     "express": "^4.15.2",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.2",
+    "jquery": "^3.2.1",
+    "jsdom": "^9.12.0",
+    "method-override": "^2.3.8",
     "mongoose": "^4.9.2",
+    "npm-request": "^1.0.0",
     "passport": "^0.3.2",
     "passport-github2": "^0.1.10",
     "passport-google-oauth20": "^1.0.0",
+    "passport-local": "^1.0.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

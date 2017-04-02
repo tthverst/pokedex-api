@@ -65,10 +65,18 @@ function myMap() {
 	});
 	
 	google.maps.event.addListener(map, 'click', function(event) {
-		var random = '1';//getRandomIntInclusive(1, 151);
-		
-		$.post( '/locations', { lat: event.latLng.lat(), lng: event.latLng.lng(), pokemon: random }, function() {
-		  window.location = '/locations';
+	
+		$.get('/pokemons', function(pokemons) {
+			var pokemonList = [];
+			var pokemons = JSON.parse(pokemons).pokemons;
+			
+			pokemons.forEach(function(pokemon) {
+				pokemonList.push(pokemon.id);
+			});
+			
+			$.post( '/locations', { lat: event.latLng.lat(), lng: event.latLng.lng(), pokemon: pokemonList[_.random(pokemonList.length - 1)] }, function() {
+			 window.location = '/locations';
+			});
 		});
 	});
 }

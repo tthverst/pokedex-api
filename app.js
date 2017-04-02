@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var exphbs = require('express-handlebars');
 var flash = require('connect-flash');
+var methodOverride = require('method-override');
 
 // Models
 var model = {};
@@ -45,6 +46,7 @@ function handleError(req, res, statusCode, message) {
 var routes = require('./routes/index')(passport, model, roles);
 var pokemons = require('./routes/pokemon')(model, roles, handleError);
 var locations = require('./routes/location')(model, roles, handleError);
+var users = require('./routes/users')(model, roles, handleError);
 // /Routes
 
 var app = express();
@@ -54,8 +56,9 @@ app.set('views', path.join(__dirname, 'views/'));
 app.engine('handlebars', exphbs({ defaultLayout: 'main', helpers:  handlebarsHelpers.helpers}));
 app.set('view engine', 'handlebars');
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(methodOverride('_method'));
+app.use(bodyParser.json({ limit: '50mb'}));
+app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -74,6 +77,7 @@ app.use(roles.middleware());
 app.use('/', routes);
 app.use('/pokemons', pokemons);
 app.use('/locations', locations);
+app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

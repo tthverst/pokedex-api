@@ -79,16 +79,16 @@ module.exports = function (model, role, errCallback) {
 
     // Routing
     router.route('/')
-        .get(getLocations)
-		.post(postLocation);
+        .get(role.can("location management"), getLocations)
+		.post(role.can("location management"),postLocation);
 		
 	router.route('/:locationID')
-		.get(getLocation)
-        .patch(patchLocation)
-		.delete(deleteLocation);
+		.get(role.can("location management"),getLocation)
+        .patch(role.can("location management"),patchLocation)
+		.delete(role.can("location management"),deleteLocation);
 		
 	router.route('/:locationID/pokemon')
-		.get(getPokemon)
+		.get(role.can("location management"),getPokemon)
 
     return router;
 }
