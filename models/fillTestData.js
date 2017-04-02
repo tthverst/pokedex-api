@@ -9,11 +9,11 @@ function saveCallback(err) {
 
 function fillTestPokemon(Pokemon, done) {
 	var testData = [
-		{ id: 1, name: 'Bulbasaur', height: 7, weight: 69, types: ["grass", "poison"], stats: { "hp": 45, "attack": 49, "defence": 49, "sp-atk": 65, "sp-def": 65, "speed": 45 }, capture_rate: 45, flavour_text: "Dolom etcet" },
-		{ id: 4, name: 'Charmander', height: 6, weight: 85, types: ["fire"], stats: { "hp": 39, "attack": 52, "defence": 43, "sp-atk": 60, "sp-def": 50, "speed": 65 }, capture_rate: 45, flavour_text: "Lorem ipsum" },
-		{ id: 7, name: 'Squirtle', height: 5, weight: 90, types: ["water"], stats: { "hp": 44, "attack": 48, "defence": 65, "sp-atk": 50, "sp-def": 64, "speed": 43 }, capture_rate: 45, flavour_text: "Hello me" },
-		{ id: 10, name: 'Caterpie', height: 3, weight: 29, types: ["bug"], stats: { "hp": 45, "attack": 30, "defence": 35, "sp-atk": 20, "sp-def": 20, "speed": 45 }, capture_rate: 255, flavour_text: "I am popular" },
-		{ id: 13, name: 'Weedle', height: 3, weight: 32, types: ["bug", "poison"], stats: { "hp": 40, "attack": 35, "defence": 30, "sp-atk": 20, "sp-def": 20, "speed": 50 }, capture_rate: 255, flavour_text: "I am popular too!" },
+		{ _id: 1, id: 1, name: 'Bulbasaur', height: 7, weight: 69, types: ["grass", "poison"], stats: { "hp": 45, "attack": 49, "defence": 49, "sp-atk": 65, "sp-def": 65, "speed": 45 }, capture_rate: 45, flavour_text: "Dolom etcet" },
+		{ _id: 4, id: 4, name: 'Charmander', height: 6, weight: 85, types: ["fire"], stats: { "hp": 39, "attack": 52, "defence": 43, "sp-atk": 60, "sp-def": 50, "speed": 65 }, capture_rate: 45, flavour_text: "Lorem ipsum" },
+		{ _id: 7, id: 7, name: 'Squirtle', height: 5, weight: 90, types: ["water"], stats: { "hp": 44, "attack": 48, "defence": 65, "sp-atk": 50, "sp-def": 64, "speed": 43 }, capture_rate: 45, flavour_text: "Hello me" },
+		{ _id: 10, id: 10, name: 'Caterpie', height: 3, weight: 29, types: ["bug"], stats: { "hp": 45, "attack": 30, "defence": 35, "sp-atk": 20, "sp-def": 20, "speed": 45 }, capture_rate: 255, flavour_text: "I am popular" },
+		{ _id: 13, id: 13, name: 'Weedle', height: 3, weight: 32, types: ["bug", "poison"], stats: { "hp": 40, "attack": 35, "defence": 30, "sp-atk": 20, "sp-def": 20, "speed": 50 }, capture_rate: 255, flavour_text: "I am popular too!" },
 	];
 
 	Pokemon.find({}, function (err, data) {
@@ -34,8 +34,8 @@ function fillTestPokemon(Pokemon, done) {
 
 function fillTestLocations(Location, done) {
 	var testData = [
-		{ id: 1, lat: 51.68865385, lng: 5.28696656, pokemon_id: 1 },
-		{ id: 2, lat: 51.69016364, lng: 5.29165506, pokemon_id: 10 }
+		{ lat: 51.68865385, lng: 5.28696656, pokemon: 1 },
+		{ lat: 51.69016364, lng: 5.29165506, pokemon: 10 }
 	];
 
 	Location.find({}, function (err, data) {
