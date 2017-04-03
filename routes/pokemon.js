@@ -26,6 +26,11 @@ function getPokemons(req, res) {
 
     if (req.query.filter) {
         query = {};
+
+        if (!Array.isArray(req.query.filter)) {
+            req.query.filter = [req.query.filter]
+        }
+
         req.query.filter.forEach(function (element) {
             query[element] = 1;
         })
