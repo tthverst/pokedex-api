@@ -2,7 +2,8 @@
   "name": "PokeApi",
   "version": "1.0.0",
   "scripts": {
-    "start": "node app-dev.js"
+    "start": "node app-dev.js",
+	"test" : "mocha tests/"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
