@@ -63,7 +63,7 @@ function getPokemons(req, res) {
                 },
 
                 '*/*': function () {
-                    res.status(200).send({ pokemons: pokemons });
+                    res.status(200).json(pokemons);
                 }
             });
         };
