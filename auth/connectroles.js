@@ -6,7 +6,7 @@ module.exports = function () {
 			if (action === 'access profile page') {
 				res.redirect('/');
 			} else {
-				res.render('access-denied', { action: action });
+				res.status(403).render('access-denied', { action: action });
 			}
 		}
 	});
