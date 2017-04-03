@@ -66,15 +66,10 @@ function myMap() {
 	
 	google.maps.event.addListener(map, 'click', function(event) {
 	
-		$.get('/pokemons', function(pokemons) {
-			var pokemonList = [];
+		$.get('/pokemons?filter=id', function(pokemons) {
 			var pokemons = JSON.parse(pokemons).pokemons;
 			
-			pokemons.forEach(function(pokemon) {
-				pokemonList.push(pokemon.id);
-			});
-			
-			$.post( '/locations', { lat: event.latLng.lat(), lng: event.latLng.lng(), pokemon: pokemonList[_.random(pokemonList.length - 1)] }, function() {
+			$.post( '/locations', { lat: event.latLng.lat(), lng: event.latLng.lng(), pokemon: pokemons[_.random(pokemons.length - 1)].id }, function() {
 			 window.location = '/locations';
 			});
 		});
