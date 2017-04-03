@@ -20,9 +20,18 @@ function getPokemons(req, res) {
     if (req.query.type) { query.types = req.query.type; };
     if (req.query.capture_rate) { query.capture_rate = req.query.capture_rate; };
     if (req.query.heigth) { query.heigth = parseInt(req.query.heigth); };
-    if (req.query.weigth) { query.weigth = req.query.weight; };
+    if (req.query.weigth) { query.weigth = parseInt(req.query.weight); };
 
     var result = Pokemon.find(query);
+
+    if (req.query.filter) {
+        query = {};
+        req.query.filter.forEach(function (element) {
+            query[element] = 1;
+        })
+
+        var result = Pokemon.find(null, query);
+    };
 
     if (req.query.limit) { limit = parseInt(req.query.limit); }
     result.limit(limit);
@@ -35,7 +44,7 @@ function getPokemons(req, res) {
     result.exec(function (err, pokemons) {
         if (err) { return handleError(err, res, 400, "Pokemons not found."); }
 
-        if ($.isEmptyObject(pokemons) && query.name) {
+        if ($.isEmptyObject(pokemons) && req.params.name) {
             getPokemonFromPokeApi(req, res);
         } else {
             res.format({
@@ -82,8 +91,8 @@ function getPokemonFromPokeApi(req, res) {
 
 function postPokemon(req, res) {
     var pokemon = new Pokemon();
-	
-	pokemon._id = req.body.id;
+
+    pokemon._id = req.body.id;
     pokemon.id = req.body.id;
     pokemon.name = req.body.name;
     pokemon.height = req.body.height;
