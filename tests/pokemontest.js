@@ -2,48 +2,68 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var should = require('chai').should();
 
-var app = require('./app.js');
+var app = require('../app.js');
 
-function makeRequest(route, statusCode, done){
+function makeRequest(route, statusCode, done) {
 	request(app)
 		.get(route)
+		.set({ 'Content-Type': 'application/json' })
 		.expect(statusCode)
-		.end(function(err, res){
-			if(err){ return done(err); }
+		.end(function (err, res) {
+			if (err) { return done(err); }
 
 			done(null, res);
 		});
 };
 
-describe('Testing pokemon route', function(){
-	describe('without params', function(){
-		it('should return pokemons', function(done){
-			var today = new Date();
-			var expectedString = 
-				(today.getDate() < 10 ? '0' : '') + 
-				today.getDate() + '-' + 
-				(today.getMonth() + 1 < 10 ? '0' : '') + 
-				(today.getMonth() + 1) + '-' + 
-				today.getFullYear();
-
-			makeRequest('/', 200, function(err, res){
-				if(err){ return done(err); }
-
-				expect(res.body).to.have.property('date');
-				expect(res.body.date).to.not.be.undefined;
-				expect(res.body.date).to.equal(expectedString);
-				done();
-			});
+describe('Testing pokemon route', function () {
+	describe('without params', function () {
+		it('should return pokemons', function (done) {
+			request(app)
+				.get('/pokemons')
+				.set('Accept', '*/*')
+				.expect(200)
+				.end(function (err, res) {
+					if (err) { return done(err); }
+					done();
+				});
 		});
 	});
 
-	describe('with invalid params', function(){
-		it('should return 400 when date is invalid', function(done){
-			makeRequest('/35/2/2000', 400, done);
+	describe('with invalid name', function () {
+		it('should return 404 when name is invalid', function (done) {
+			request(app)
+				.get('/pokemons/bulbasaurr')
+				.expect(404)
+				.end(function (err, res) {
+					if (err) { return done(err); }
+					done();
+				});
 		});
+	});
 
-		it('should return 400 when date is not numeric', function(done){
-			makeRequest('/test/me/now', 400, done);
+	describe('with valid name', function () {
+		it('should return 200 when name is valid', function (done) {
+			request(app)
+				.get('/pokemons/bulbasaur')
+				.set('Accept', '*/*')
+				.expect(200)
+				.end(function (err, res) {
+					if (err) { return done(err); }
+					done();
+				});
+		});
+	});
+
+	describe('without admin role', function () {
+		it('should return 403 access denied', function (done) {
+			request(app)
+				.delete('/pokemons/bulbasaur')
+				.expect(403)
+				.end(function (err, res) {
+					if (err) { return done(err); }
+					done(null, res);
+				});
 		});
 	});
 });
