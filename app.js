@@ -1,5 +1,10 @@
 var express = require('express');
 var path = require('path');
+
+var environment = process.env.NODE_ENV || 'development'
+var Config = require('./config/config'); 
+var config = new Config(environment); 
+
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
