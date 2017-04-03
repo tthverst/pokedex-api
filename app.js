@@ -1,6 +1,9 @@
 var express = require('express');
 var path = require('path');
-var port = process.env.PORT || 8080;
+
+var Config = require('./config/config');
+var config = new Config();
+
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -111,7 +114,7 @@ app.use(function (err, req, res, next) {
     });
 });
 
-app.listen(port);
-console.log('The magic happens on port ' + port);
+app.listen(process.env.PORT, process.env.BASEURL);
+console.log('The magic happens on port ' + process.env.PORT);
 
 module.exports = app;

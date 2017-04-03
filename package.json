@@ -2,7 +2,7 @@
   "name": "PokeApi",
   "version": "1.0.0",
   "scripts": {
-    "start": "node app.js"
+    "start": "NODE_ENV=dev node app.js"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
