@@ -1,7 +1,7 @@
 {
   "name": "PokeApi",
   "version": "1.0.0",
-  "script": {
+  "scripts": {
     "start": "node app.js"
   },
   "dependencies": {
