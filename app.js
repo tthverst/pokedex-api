@@ -1,9 +1,5 @@
 var express = require('express');
 var path = require('path');
-
-var Config = require('./config/config');
-var config = new Config('prod');
-
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -113,8 +109,5 @@ app.use(function (err, req, res, next) {
         error: {}
     });
 });
-
-app.listen(process.env.PORT, process.env.BASEURL);
-console.log('The magic happens on port ' + process.env.PORT);
 
 module.exports = app;

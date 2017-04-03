@@ -9,7 +9,6 @@ var request = require('request');
 var jsdom = require('jsdom').jsdom;
 var doc = jsdom();
 var window = doc.defaultView;
-var $ = require('jquery')(window);
 
 function getPokemons(req, res) {
     var query = {};
@@ -49,7 +48,7 @@ function getPokemons(req, res) {
     result.exec(function (err, pokemons) {
         if (err) { return handleError(err, res, 400, "Pokemons not found."); }
 
-        if ($.isEmptyObject(pokemons) && req.params.name) {
+        if (pokemons.length <= 0 && req.params.name) {
             getPokemonFromPokeApi(req, res);
         } else {
             res.format({
@@ -72,62 +71,50 @@ function getPokemons(req, res) {
 }
 
 function getPokemonFromPokeApi(req, res) {
-    var r = request("http://pokeapi.co/api/v2/pokemon/" + req.params.name.toLowerCase())
-	
-	var rURL = "http://" + process.env.FULLURL  +  "/pokemons/"
-	
-    r.on('response', function (response) {
-
-        if (response.statusCode === 200) {
-            r.pipe(request.post(rURL));
-
-            r.on('end', function () {
-                r = request("http://pokeapi.co/api/v2/pokemon-species/" + req.params.name.toLowerCase())
-
-                r.on('response', function (response) {
-                    r.pipe(request.patch(rURL + req.params.name.toLowerCase(), function () {
-                        res.redirect(rURL + req.params.name.toLowerCase());
-                    }));
-                });
-            });
+    request("http://pokeapi.co/api/v2/pokemon/" + req.params.name.toLowerCase(), function (error, response, body) {
+        if (response.statusCode !== 200) {
+            res.status(404).send("Pokemon not found");
         } else {
-            res.send("Pokemon not found.");
+            addPokemon(req, res, JSON.parse(body));
         }
     });
 }
 
-function postPokemon(req, res) {
+function addPokemon(req, res, pokemonData) {
     var pokemon = new Pokemon();
 
-    pokemon._id = req.body.id;
-    pokemon.id = req.body.id;
-    pokemon.name = req.body.name;
-    pokemon.height = req.body.height;
-    pokemon.weight = req.body.weight;
+    pokemon._id = pokemonData.id;
+    pokemon.id = pokemonData.id;
+    pokemon.name = pokemonData.name;
+    pokemon.height = pokemonData.height;
+    pokemon.weight = pokemonData.weight;
     pokemon.types = [];
     pokemon.stats = {};
 
-    $.each(req.body.types, function (index, type) {
+    pokemonData.types.forEach(function (type) {
         pokemon.types.push(type.type.name);
     });
 
-    $.each(req.body.stats, function (index, stat) {
+    pokemonData.stats.forEach(function (stat) {
         pokemon.stats[stat.stat.name] = stat.base_stat;
     });
 
     pokemon.save(function (err) {
         if (err) { return handleError(err, res, 400, "Pokemon is not added. You might have chosen an ID or name that already exists."); }
-        res.status(201).send("Pokemon created");
+
+        request("http://pokeapi.co/api/v2/pokemon-species/" + req.params.name.toLowerCase(), function (error, response, body) {
+            updatePokemon(req, res, JSON.parse(body));
+        });
     });
 }
 
-function patchPokemon(req, res) {
+function updatePokemon(req, res, pokemonData) {
     Pokemon.findOne({ "name": req.params.name.toLowerCase() }, function (err, pokemon) {
         if (err) { return handleError(err); }
 
-        pokemon.capture_rate = req.body.capture_rate;
+        pokemon.capture_rate = pokemonData.capture_rate;
 
-        $.each(req.body.flavor_text_entries, function (index, entry) {
+        pokemonData.flavor_text_entries.forEach(function (entry) {
             if (entry.version.name === "red") {
                 pokemon.flavour_text = entry.flavor_text
             };
@@ -135,7 +122,7 @@ function patchPokemon(req, res) {
 
         pokemon.save(function (err) {
             if (err) { return handleError(err, res, 400, "Pokemon is not updated."); }
-            res.status(201).send("Pokemon updated");
+            res.status(201).redirect('/pokemons/' + req.params.name.toLowerCase());
         });
     });
 }
@@ -154,11 +141,9 @@ module.exports = function (model, role, errCallback) {
     // Routing
     router.route('/')
         .get(getPokemons)
-        .post(postPokemon);
 
     router.route('/:name')
         .get(getPokemons)
-        .patch(patchPokemon)
         .delete(role.can("delete pokemons"), deletePokemon);
 
     return router;
