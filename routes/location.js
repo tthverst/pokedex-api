@@ -1,9 +1,7 @@
 var express = require('express');
 var router = express();
-var path = require('path');
 var _ = require('underscore');
 var handleError;
-var async = require('async');
 
 function getLocations(req, res) {
     Location.find({}, function (err, locations) {
@@ -22,7 +20,7 @@ function getLocations(req, res) {
 }
 
 function getLocation(req, res) {
-    Location.find({ "_id": req.params.locationID }, function (err, location) {
+    Location.findOne({ "_id": req.params.locationID }, function (err, location) {
         if (err) { return handleError(err, res, 404, "Location not found."); }
         res.status(200).json(location);
     });
@@ -80,15 +78,15 @@ module.exports = function (model, role, errCallback) {
     // Routing
     router.route('/')
         .get(role.can("location management"), getLocations)
-		.post(role.can("location management"),postLocation);
+		.post(role.can("location management"), postLocation);
 		
 	router.route('/:locationID')
-		.get(role.can("location management"),getLocation)
-        .patch(role.can("location management"),patchLocation)
-		.delete(role.can("location management"),deleteLocation);
+		.get(role.can("location management"), getLocation)
+        .patch(role.can("location management"), patchLocation)
+		.delete(role.can("location management"), deleteLocation);
 		
 	router.route('/:locationID/pokemon')
-		.get(role.can("location management"),getPokemon)
+		.get(role.can("location management"), getPokemon)
 
     return router;
 }

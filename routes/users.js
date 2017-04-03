@@ -3,7 +3,6 @@ var router = express();
 var path = require('path');
 var _ = require('underscore');
 var handleError;
-var async = require('async');
 
 function getUsers(req, res) {
     User.find({}, function (err, users) {
@@ -24,7 +23,17 @@ function getUsers(req, res) {
 function getUser(req, res) {
     User.find({ "local.username": req.params.username }, function (err, user) {
         if (err) { return handleError(err, res, 404, "User not found."); }
-        res.redirect('/profile');
+        
+		res.format({
+            'text/html': function () {
+                res.redirect('/profile');
+            },
+
+            '*/*': function () {
+                res.status(200).json(user);
+            }
+        });
+		
     });
 }
 
@@ -44,9 +53,33 @@ function patchUser(req, res) {
 
 function deleteUser(req, res) {
     User.remove({ "local.username": req.params.username }, function (err, user) {
-        if (err) { return handleError(err, res, 400, "Pokemon is not removed."); }
+        if (err) { return handleError(err, res, 400, "User is not removed."); }
         res.status(200).redirect('/users');
     });
+}
+
+function catchPokemon(req, res) {
+    User.findOne({ "local.username": req.params.username }, function (err, user) {
+        if (err) { return handleError(err, res, 404, "Pokemon not caught."); }
+
+        user.pokemons.push(req.params.pokemonID);
+
+        user.save(function (err) {
+            if (err) { return err }
+            res.status(200).send({ pokemons: user.pokemons });
+        })
+    });
+}
+
+function getCaughtPokemons(req, res){
+	User
+		.findOne({ "local.username": req.params.username })
+		.populate('pokemons')
+		.exec(function(err, data){
+			if(err){ return handleError(req, res, 500, err); }
+
+			res.json(data.pokemons);
+		});
 }
 
 module.exports = function (model, role, errCallback) {
@@ -61,6 +94,12 @@ module.exports = function (model, role, errCallback) {
         .get(role.can("this user"), getUser)
         .patch(role.can("this user"), patchUser)
         .delete(role.can("this user"), deleteUser);
+		
+	router.route('/:username/pokemons')
+        .get(role.can("this user"), getCaughtPokemons)
+		
+	router.route('/:username/pokemons/:pokemonID')
+        .post(role.can("this user"), catchPokemon)
 
     return router;
 }
