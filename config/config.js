@@ -1,6 +1,6 @@
 module.exports = function(env) {
 	
-	switch(env) {
+	switch(process.env.NODE_ENV) {
 		case 'development':
 			process.env.BASEURL = 'localhost';
 			process.env.PORT = 8080;
