@@ -7,16 +7,9 @@ var mongoose = require('mongoose');
 //     return mongoose;
 // };
 
-// mLab production
-// module.exports = function () {
-//     mongoose.Promise = global.Promise;
-//     mongoose.connect('mongodb://ash:catchpokemons@ds115110.mlab.com:15110/pokeapi');
-//     return mongoose;
-// };
-
-// mLab test
+// mLab
 module.exports = function () {
     mongoose.Promise = global.Promise;
-    mongoose.connect('mongodb://ash:catchpokemon@ds151060.mlab.com:51060/pokeapi-test');
+    mongoose.connect('mongodb://ash:catchpokemons@ds115110.mlab.com:15110/pokeapi');
     return mongoose;
 };

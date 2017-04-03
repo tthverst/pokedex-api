@@ -58,12 +58,12 @@ function getPokemons(req, res) {
                         prevPage: page - 1 >= 0 ? page - 1 : null,
                         nextPage: pokemons.length >= limit ? page + 1 : null,
                         limit: limit,
-                        showButtons: query.name ? false : true,
+                        showButtons: query.name ? false : true
                     });
                 },
 
                 '*/*': function () {
-                    res.status(200).json(pokemons);
+                    res.status(200).send({ pokemons: pokemons });
                 }
             });
         };
