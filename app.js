@@ -2,7 +2,7 @@ var express = require('express');
 var path = require('path');
 
 var Config = require('./config/config');
-var config = new Config();
+var config = new Config('prod');
 
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');

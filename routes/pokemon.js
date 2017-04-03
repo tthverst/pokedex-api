@@ -73,20 +73,18 @@ function getPokemons(req, res) {
 
 function getPokemonFromPokeApi(req, res) {
     var r = request("http://pokeapi.co/api/v2/pokemon/" + req.params.name.toLowerCase())
-
-	console.log(process.env.BASEURL + " + " + process.env.PORT);
 	
     r.on('response', function (response) {
 
         if (response.statusCode === 200) {
-            r.pipe(request.post(process.env.BASEURL + process.env.PORT + "/pokemons"));
+            r.pipe(request.post("http://" + process.env.BASEURL  + ":" +  process.env.PORT + "/pokemons"));
 
             r.on('end', function () {
                 r = request("http://pokeapi.co/api/v2/pokemon-species/" + req.params.name.toLowerCase())
 
                 r.on('response', function (response) {
-                    r.pipe(request.patch(process.env.BASEURL + process.env.PORT + "/pokemons/" + req.params.name.toLowerCase(), function () {
-                        res.redirect(process.env.BASEURL + process.env.PORT + "/pokemons/" + req.params.name.toLowerCase());
+                    r.pipe(request.patch("http://" + process.env.BASEURL + ":" + process.env.PORT + "/pokemons/" + req.params.name.toLowerCase(), function () {
+                        res.redirect("http://" + process.env.BASEURL  + ":" +  process.env.PORT + "/pokemons/" + req.params.name.toLowerCase());
                     }));
                 });
             });
