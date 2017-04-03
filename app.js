@@ -1,5 +1,6 @@
 var express = require('express');
 var path = require('path');
+var cors = require('./config/cors');
 
 var environment = process.env.NODE_ENV || 'development'
 var Config = require('./config/config'); 
@@ -60,6 +61,7 @@ app.set('views', path.join(__dirname, 'views/'));
 app.engine('handlebars', exphbs({ defaultLayout: 'main', helpers:  handlebarsHelpers.helpers}));
 app.set('view engine', 'handlebars');
 
+app.use(cors());
 app.use(methodOverride('_method'));
 app.use(bodyParser.json({ limit: '50mb'}));
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
