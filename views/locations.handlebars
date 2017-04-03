@@ -1,0 +1,80 @@
+<div class="page-header text-center">
+		<img class="pokeball" src="./img/pokeball.svg">
+		<h1> Catch locations </h1>
+</div>
+
+<div id="googleMap" style="width:100%;height:600px;"></div>
+
+<script>
+function createMarker(location, map) {
+	
+	$.get( '/locations/' + location._id + "/pokemon", function(pokemon) {
+	
+		var infowindow = new google.maps.InfoWindow({
+		  content: "You can catch a <span class='poke-name'>" + pokemon.name + "</span> here!"
+		});
+		
+		var marker = new google.maps.Marker({
+			position: { lat: location.lat, lng: location.lng},
+			map: map,
+			icon: "img/pokemon/" + pokemon.id + ".png",
+			draggable: true
+		});
+		
+		marker.addListener('click', function() {
+		  infowindow.open(map, marker);
+		});
+		
+		marker.addListener("dblclick", function() {
+			marker.setMap(null);
+			$.ajax({
+				url : '/locations/' + location._id,
+				type : 'DELETE',
+				success: function() {
+					window.location = '/locations';
+				}
+			});
+		});
+		
+		marker.addListener("dragend", function(event) {
+			$.ajax({
+				url : '/locations/' + location._id,
+				data : { lat: marker.position.lat(), lng: marker.position.lng() },
+				type : 'PATCH',
+				success: function() {
+					window.location = '/locations';
+				}
+			});
+		});
+	});
+}
+
+function myMap() {
+	var mapOptions = {
+		center:new google.maps.LatLng(51.689092,5.2950668),
+		zoom:15,
+		minZoom: 15,
+		disableDefaultUI: true
+	};
+
+	var map = new google.maps.Map( document.getElementById("googleMap" ), mapOptions);
+	var locations = JSON.parse( '{{{json locations}}}' );
+	
+	locations.forEach(function(location) {
+		createMarker(location, map);
+	});
+	
+	google.maps.event.addListener(map, 'click', function(event) {
+	
+		$.get('/pokemons?filter=id', function(pokemons) {
+			var pokemons = JSON.parse(pokemons).pokemons;
+			
+			$.post( '/locations', { lat: event.latLng.lat(), lng: event.latLng.lng(), pokemon: pokemons[_.random(pokemons.length - 1)].id }, function() {
+			 window.location = '/locations';
+			});
+		});
+	});
+}
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEjyd97ZOPuysesQJ_UB-UCTfm8tTjQKE&callback=myMap"></script>

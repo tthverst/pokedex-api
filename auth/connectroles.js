@@ -35,7 +35,13 @@ module.exports = function () {
 			return true;
 		};
 	});
-
+	
+	roles.use('location management', function (req) {
+		if (req.user && req.user.role === 'admin') {
+			return true;
+		};
+	});
+	
 	roles.use('this user', function (req) {
 		if (req.user && req.user.local.username === req.params.username) {
 			return true;

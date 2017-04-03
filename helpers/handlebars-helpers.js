@@ -44,10 +44,11 @@ function hbsHelpers(hbs) {
 
 				return text;
 			},
+			json: function (content) {
+				return JSON.stringify(content);
+			},
 			selected: function (value) {
-				var role = this.role;
-				
-				if(value === role) {
+				if(value === this.role) {
 					return "selected";
 				}
 				
