@@ -6,7 +6,8 @@ module.exports = function(env) {
 			process.env.PORT = 8080;
 			break;
 		case 'prod':
-			process.env.BASEURL = 'avanspokemons.herokuapp.com/';
+			process.env.BASEURL = 'avanspokemons.herokuapp.com';
+			process.env.PORT = 8080;			
 			break;
 		default:
 			process.env.BASEURL = 'localhost';
