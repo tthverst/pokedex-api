@@ -20,7 +20,7 @@ var init = function (mongoose) {
             name: String
         },
         role: { type: String, default: "player", required: true },
-        pokemons: [Number]
+        pokemons: [{ type: Number, ref: 'Pokemon' }]
     });
 
     userSchema.methods.generateHash = function (password) {
