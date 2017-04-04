@@ -67,7 +67,7 @@ function myMap() {
 	google.maps.event.addListener(map, 'click', function(event) {
 	
 		$.get('/pokemons?filter=id', function(pokemons) {
-			var pokemons = JSON.parse(pokemons).pokemons;
+			var pokemons = JSON.parse(pokemons);
 			
 			$.post( '/locations', { lat: event.latLng.lat(), lng: event.latLng.lng(), pokemon: pokemons[_.random(pokemons.length - 1)].id }, function() {
 			 window.location = '/locations';
