@@ -20,12 +20,16 @@ module.exports = function (passport, model, role) {
 
 	router.route('/profile')
 		.get(role.can("access profile page"),function (req, res) {
-			res.render('profile', {
-				title: 'Your profile',
-				user: req.user // get the user out of session and pass to template
+			res.format({
+				'text/html': function(){
+					res.status(200).render('profile.handlebars', { title: 'Your profile', user: req.user });
+				},
+				
+				'*/*': function() {
+					res.status(200).send({ user: req.user });
+				}
 			});
-		}
-		);
+		});
 
 	// =====================================
 	// LOCAL LOGIN =========================
