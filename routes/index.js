@@ -20,15 +20,7 @@ module.exports = function (passport, model, role) {
 
 	router.route('/profile')
 		.get(role.can("access profile page"),function (req, res) {
-			res.format({
-				'text/html': function(){
-					res.status(200).render('profile.handlebars', { title: 'Your profile', user: req.user });
-				},
-				
-				'*/*': function() {
-					res.status(200).send({ user: req.user });
-				}
-			});
+			res.status(200).render('profile.handlebars', { title: 'Your profile', user: req.user });
 		});
 
 	// =====================================
@@ -44,10 +36,19 @@ module.exports = function (passport, model, role) {
 	// process the login form
 	router.route('/login')
 		.post(passport.authenticate('local-login', {
-			successRedirect: '/profile', // redirect to the secure profile section
 			failureRedirect: '/login', // redirect back to the signup page if there is an error
 			failureFlash: true // allow flash messages
-		}));
+		}), function(req, res, next){
+			res.format({
+				'text/html': function(){
+					res.redirect('/profile');
+				},
+				
+				'*/*': function() {
+					res.status(200).send({user: req.user});
+				}
+			});
+		});
 
 	// =====================================
 	// LOCAL SIGNUP ========================
