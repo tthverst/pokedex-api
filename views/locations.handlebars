@@ -32,6 +32,14 @@ function createMarker(location, map) {
 				type : 'DELETE',
 				success: function() {
 					window.location = '/locations';
+				},
+				error: function(xhr) {
+					if(xhr.status == 403){
+						window.location = '/login';
+					}
+					else {
+						window.location = '/locations';
+					}
 				}
 			});
 		});
@@ -43,7 +51,15 @@ function createMarker(location, map) {
 				type : 'PATCH',
 				success: function() {
 					window.location = '/locations';
-				}
+				},
+				error: function(xhr) {
+				  if(xhr.status == 403){
+					window.location = '/login';
+				  }
+				  else {
+					window.location = '/locations';
+				  }
+			  }
 			});
 		});
 	});
@@ -69,9 +85,23 @@ function myMap() {
 		$.get('/pokemons?filter=id', function(pokemons) {
 			var pokemons = JSON.parse(pokemons);
 			
-			$.post( '/locations', { lat: event.latLng.lat(), lng: event.latLng.lng(), pokemon: pokemons[_.random(pokemons.length - 1)].id }, function() {
-			 window.location = '/locations';
+			$.ajax({
+			  type: "POST",
+			  url: '/locations',
+			  data: { lat: event.latLng.lat(), lng: event.latLng.lng(), pokemon: pokemons[_.random(pokemons.length - 1)].id },
+			  success: function() {
+				window.location = '/locations';
+			  },
+			  error: function(xhr) {
+				  if(xhr.status == 403){
+					window.location = '/login';
+				  }
+				  else {
+					window.location = '/locations';
+				  }
+			  }
 			});
+			
 		});
 	});
 }
