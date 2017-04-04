@@ -2,6 +2,9 @@ var express = require('express');
 var router = express();
 var path = require('path');
 var _ = require('underscore');
+var jwt = require('jwt-simple');
+var jwtauth = require('../auth/jwtauth.js');
+var moment = require('moment');
 var handleError;
 
 function getUsers(req, res) {
@@ -33,6 +36,31 @@ function getUser(req, res) {
                 res.status(200).json(user);
             }
         });
+		
+    });
+}
+
+function getToken(req, res) {
+	User.findOne({ "local.username": req.body.username }, function (err, user) {
+        if (!user) { res.status(404).send("User not found."); return;}
+		
+		if( !user.validPassword(req.body.password) ) {
+			res.status(401).send('Incorrect username/password'); return;
+		}
+		
+		user.local.password = '';
+		
+		var expires = moment().add(7, 'days').valueOf();
+		var token = jwt.encode({
+		  iss: user._id,
+		  exp: expires
+		}, 'OurPokeApi');
+
+		res.status(200).json({
+		  token : token,
+		  expires: expires,
+		  user: user
+		});
 		
     });
 }
@@ -88,18 +116,27 @@ module.exports = function (model, role, errCallback) {
 
     // Routing
     router.route('/')
-        .get(role.can("user management"), getUsers)
+        .get(role.can('user management'), getUsers)
 
     router.route('/:username')
-        .get(role.can("this user"), getUser)
+        .get(getUser)
         .patch(role.can("this user"), patchUser)
         .delete(role.can("this user"), deleteUser);
 		
 	router.route('/:username/pokemons')
         .get(role.can("this user"), getCaughtPokemons)
 		
+	router.route('/app/:username/pokemons')
+        .get(jwtauth, getCaughtPokemons)
+		
 	router.route('/:username/pokemons/:pokemonID')
         .post(role.can("this user"), catchPokemon)
+		
+	router.route('/app/:username/pokemons/:pokemonID')
+        .post(jwtauth, catchPokemon)
+	
+	router.route('/authenticate')
+        .post(getToken)
 
     return router;
 }
