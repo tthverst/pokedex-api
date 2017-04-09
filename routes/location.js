@@ -7,15 +7,8 @@ function getLocations(req, res) {
     Location.find({}, function (err, locations) {
         if (err) { return handleError(err, res, 400, "Locations not found."); }		
 		
-        res.format({
-			'text/html': function(){
-				res.status(200).render('locations.handlebars', { locations: locations });
-			},
-			
-			'*/*': function() {
-				res.status(200).send({ locations: locations });
-			}
-		});
+		res.status(200).send({ locations: locations });
+		
     });
 }
 

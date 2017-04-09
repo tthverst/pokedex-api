@@ -11,15 +11,7 @@ function getUsers(req, res) {
     User.find({}, function (err, users) {
         if (err) { return handleError(err, res, 400, "Users not found."); }
 
-        res.format({
-            'text/html': function () {
-                res.status(200).render('users.handlebars', { users: users });
-            },
-
-            '*/*': function () {
-                res.status(200).send({ users: users });
-            }
-        });
+		res.status(200).send({ users: users });
     });
 }
 
@@ -27,15 +19,7 @@ function getUser(req, res) {
     User.find({ "local.username": req.params.username }, function (err, user) {
         if (err) { return handleError(err, res, 404, "User not found."); }
         
-		res.format({
-            'text/html': function () {
-                res.redirect('/profile');
-            },
-
-            '*/*': function () {
-                res.status(200).json(user);
-            }
-        });
+		res.status(200).json(user);
 		
     });
 }

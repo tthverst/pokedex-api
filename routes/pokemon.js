@@ -51,21 +51,9 @@ function getPokemons(req, res) {
         if (pokemons.length <= 0 && req.params.name) {
             getPokemonFromPokeApi(req, res);
         } else {
-            res.format({
-                'text/html': function () {
-                    res.status(200).render('pokemons.handlebars', {
-                        pokemons: pokemons,
-                        prevPage: page - 1 >= 0 ? page - 1 : null,
-                        nextPage: pokemons.length >= limit ? page + 1 : null,
-                        limit: limit,
-                        showButtons: query.name ? false : true
-                    });
-                },
-
-                '*/*': function () {
-                    res.status(200).json(pokemons);
-                }
-            });
+		
+			res.status(200).json(pokemons);
+			
         };
     });
 }
