@@ -99,7 +99,7 @@ function deleteCaughtPokemon(req,res) {
 		.findOne({ "local.username": req.params.username }, function(err, user) {
             if (err) { return handleError(err, res, 404, "Pokemon not found."); }
             
-            var index = user.pokemons.indexOf(req.body.pokemon)
+            var index = user.pokemons.indexOf(req.params.pokemonID)
             if (index > -1) {
                 user.pokemons.splice(index, 1)
             }
@@ -128,13 +128,13 @@ module.exports = function (model, role, errCallback) {
 		
 	router.route('/app/:username/pokemons')
         .get(jwtauth, getCaughtPokemons)
-        .delete(jwtauth, deleteCaughtPokemon)
 		
 	router.route('/:username/pokemons/:pokemonID')
         .post(role.can("this user"), catchPokemon)
 		
 	router.route('/app/:username/pokemons/:pokemonID')
         .post(jwtauth, catchPokemon)
+        .delete(jwtauth, deleteCaughtPokemon)
 	
 	router.route('/authenticate')
         .post(getToken)
