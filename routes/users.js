@@ -94,6 +94,22 @@ function getCaughtPokemons(req, res){
 		});
 }
 
+function deleteCaughtPokemon(req,res) {
+    User
+		.findOne({ "local.username": req.params.username }, function(err, user) {
+            if (err) { return handleError(err, res, 404, "Pokemon not found."); }
+            
+            var index = user.pokemons.indexOf(req.body.pokemon)
+            if (index > -1) {
+                user.pokemons.splice(index, 1)
+            }
+            user.save(function(err) {
+                if (err) { return err }
+                res.status(200).send({ pokemons: user.pokemons });
+            })
+        });
+}
+
 module.exports = function (model, role, errCallback) {
     User = model.User;
     handleError = errCallback;
@@ -112,6 +128,7 @@ module.exports = function (model, role, errCallback) {
 		
 	router.route('/app/:username/pokemons')
         .get(jwtauth, getCaughtPokemons)
+        .delete(jwtauth, deleteCaughtPokemon)
 		
 	router.route('/:username/pokemons/:pokemonID')
         .post(role.can("this user"), catchPokemon)
