@@ -2,7 +2,7 @@ var _ = require('underscore');
 
 var init = function (mongoose) {
     var pokemonSchema = mongoose.Schema({
-        _id: { type: Number, required: true, unique: true },
+        _id: { type: Number, required: true },
 		id: { type: Number, required: true, unique: true },
         name: { type: String, required: true, unique: true, lowercase: true },
         height: { type: Number, required: true },
